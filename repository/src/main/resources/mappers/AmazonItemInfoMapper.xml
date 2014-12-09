@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boredou.mercury.repository.dao.AmazonItemInfoDAO" >
+
+	<resultMap id="AmazonItemInfoResultMap"
+		type="com.boredou.mercury.repository.entity.AmazonItemInfoDO">
+		<id property="id" column="id" />
+		<result property="gmtCreated" column="gmt_created" />
+		<result property="gmtModified" column="gmt_modified" />
+
+		<result property="selfAsin" column="self_asin" />
+		<result property="parentAsin" column="parent_asin" />
+		<result property="belongAsin" column="belong_asin" />
+		
+		<result property="material" column="material" />
+		<result property="size" column="size" />
+		<result property="imgUrl" column="img_url" />
+		<result property="price" column="price" />
+		<result property="stock" column="stock" />
+		<result property="seller" column="seller" />
+		<result property="lastHttpCode" column="last_http_code" />
+		<result property="goodsType" column="goods_type" />
+	</resultMap>
+	
+	<sql id="allCol" >
+		id,gmt_created,gmt_modified,self_asin,parent_asin,belong_asin,material,size,img_url,price,stock,seller,last_http_code,goods_type
+	</sql>
+	
+	<insert id="addAmazonItemInfoDO" parameterType="AmazonItemInfoDO">
+		insert into amazon_item_info (gmt_created,gmt_modified,self_asin,parent_asin,belong_asin,material,size,img_url,price,stock,seller,last_http_code,goods_type ) 
+		VALUES(now(),now(),#{selfAsin},#{parentAsin},#{belongAsin},#{material},#{size},#{imgUrl},#{price},#{stock},#{seller},#{lastHttpCode},#{goodsType})
+	</insert>
+	
+<!-- 	<select id="getAmazonCategoryList" parameterType="AmazonCategoryDO" resultMap="AmazonCategoryResultMap">
+		select <include refid="allCol"/> 
+		from amazon_category 
+		<where>
+			<if test="goodsType != null and goodsType !='' ">
+				and goods_type = #{goodsType}
+			</if>
+			<if test="sex != null and sex !='' ">
+				and sex = #{sex}
+			</if>
+			<if test="display != null and display !='' ">
+				and display = #{display}
+			</if>
+		</where>
+	</select> -->
+	
+	<update id="updateAmazonItemInfoByMultiAsin" parameterType="AmazonItemInfoDO">
+		update amazon_item_info
+		<set>
+			<if test="material != null and material !='' ">
+				material = #{material},
+			</if>
+			<if test="size != null and size !='' ">
+				size = #{size},
+			</if>
+			<if test="imgUrl != null and imgUrl !='' ">
+				img_url = #{imgUrl},
+			</if>
+			<if test="price != null and price !='' ">
+				price = #{price},
+			</if>
+			<if test="stock != null and stock !='' ">
+				stock = #{stock},
+			</if>
+			<if test="seller != null and seller !='' ">
+				seller = #{seller},
+			</if>
+			<if test="lastHttpCode != null and lastHttpCode !='' ">
+				last_http_code = #{lastHttpCode},
+			</if>
+			gmt_modified = now()
+		</set>
+		<where>
+			self_asin=#{selfAsin} and parent_asin=#{parentAsin} and belong_asin=#{belongAsin} 
+		</where>
+	</update>
+	
+	<update id="updateAmazonItemInfoBySelfAsin" parameterType="AmazonItemInfoDO">
+		update amazon_item_info
+		<set>
+			<if test="material != null and material !='' ">
+				material = #{material},
+			</if>
+			<if test="size != null and size !='' ">
+				size = #{size},
+			</if>
+			<if test="imgUrl != null and imgUrl !='' ">
+				img_url = #{imgUrl},
+			</if>
+			<if test="price != null and price !='' ">
+				price = #{price},
+			</if>
+			<if test="stock != null and stock !='' ">
+				stock = #{stock},
+			</if>
+			<if test="seller != null and seller !='' ">
+				seller = #{seller},
+			</if>
+			<if test="lastHttpCode != null and lastHttpCode !='' ">
+				last_http_code = #{lastHttpCode},
+			</if>
+			gmt_modified = now()
+		</set>
+		<where>
+			self_asin=#{selfAsin}  
+		</where>
+	</update>
+	
+	<select id="getAmazonItemInfoDOByMultiAsinLimit1" parameterType="AmazonItemInfoDO" resultMap="AmazonItemInfoResultMap">
+		select <include refid="allCol"/> 
+		from amazon_item_info
+		<where>
+			<if test="goodsType != null and goodsType !='' ">
+				and self_asin = #{selfAsin}
+			</if>
+			<if test="sex != null and sex !='' ">
+				and parent_asin = #{parentAsin}
+			</if>
+			<if test="display != null and display !='' ">
+				and belong_asin = #{belongAsin}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getAmazonItemInfoDOBySelfAsinLimit1" parameterType="AmazonItemInfoDO" resultMap="AmazonItemInfoResultMap">
+		select <include refid="allCol"/> 
+		from amazon_item_info
+		<where>
+			<if test="goodsType != null and goodsType !='' ">
+				and self_asin = #{selfAsin}
+			</if>
+		</where>
+	</select>
+	
+</mapper> 

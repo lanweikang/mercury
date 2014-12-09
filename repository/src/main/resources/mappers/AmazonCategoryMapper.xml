@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boredou.mercury.repository.dao.AmazonCategoryDAO" >
+
+	<resultMap id="AmazonCategoryResultMap"
+		type="com.boredou.mercury.repository.entity.AmazonCategoryDO">
+		<id property="id" column="id" />
+		<result property="gmtCreated" column="gmt_created" />
+		<result property="gmtModified" column="gmt_modified" />
+
+		<result property="name" column="name" />
+		<result property="searchUrl" column="search_url" />
+		<result property="goodsType" column="goods_type" />
+		<result property="sex" column="sex" />
+		<result property="display" column="display" />
+		<result property="lastHttpCode" column="last_http_code" />
+		<result property="searchStatus" column="search_status" />
+	</resultMap>
+	
+	<sql id="allCol" >
+		id,gmt_created,gmt_modified,name,search_url,goods_type,sex,display,last_http_code
+	</sql>
+	
+	<insert id="addAmazonCategoryDO" parameterType="AmazonCategoryDO">
+		insert into amazon_category (gmt_created , gmt_modified , name , search_url , goods_type , sex , display , last_http_code ) 
+		VALUES(now(),now(),#{name},#{searchUrl},#{goodsType},#{sex},#{display},#{lastHttpCode})
+	</insert>
+	
+	<select id="getAmazonCategoryList" parameterType="AmazonCategoryDO" resultMap="AmazonCategoryResultMap">
+		select <include refid="allCol"/> 
+		from amazon_category 
+		<where>
+			<if test="goodsType != null and goodsType !='' ">
+				and goods_type = #{goodsType}
+			</if>
+			<if test="sex != null and sex !='' ">
+				and sex = #{sex}
+			</if>
+			<if test="display != null and display !='' ">
+				and display = #{display}
+			</if>
+		</where>
+	</select>
+	
+	<update id="delAmazonCategoryDOById" parameterType="int">
+		update amazon_category
+		<set>
+			display = 'no'
+			,gmt_modified = now()
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	
+	<update id="updateAmazonCategoryDO" parameterType="AmazonCategoryDO">
+		update amazon_category
+		<set>
+			<if test="name != null and name !='' ">
+				name = #{name},
+			</if>
+			<if test="searchUrl != null and searchUrl !='' ">
+				search_url = #{searchUrl},
+			</if>
+			<if test="lastHttpCode != null and lastHttpCode !='' ">
+				last_http_code = #{lastHttpCode},
+			</if>
+			gmt_modified = now()
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	
+</mapper> 

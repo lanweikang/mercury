@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ================================================= -->
+    <!-- 定义父项目 -->
+    <!-- ================================================= -->
+    <parent>
+        <groupId>com.boredou.mercury</groupId>
+        <artifactId>mercury</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <!-- ================================================= -->
+    <!-- 定义子项目 -->
+    <!-- ================================================= -->
+    <artifactId>mercury-deploy</artifactId>
+    <packaging>pom</packaging>
+    <name>mercury deploy</name>
+
+    <!-- ================================================= -->
+    <!-- 配置编译参数 -->
+    <!-- ================================================= -->
+    <build>
+        <finalName>mercury</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/main/assembly/assembly.xml</descriptor>
+                    </descriptors>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

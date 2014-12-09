@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boredou.mercury.repository.dao.ItemDAO" >
+
+	<resultMap type="com.boredou.mercury.repository.entity.ItemDO" id="category">
+		<id property="id" column="id" />
+		<result property="title" column="name" />
+		<result property="goodsUrl" column="item_url" />
+		<result property="attrs" column="whole_content" />
+		<result property="category" column="category" />
+	</resultMap>
+
+	<select id="getItemList" parameterType="String" resultMap="category">
+		select a.id , a.name , a.item_url , a.whole_content , b.name as category from amazon_item as a left join amazon_category as b on a.belongto_category_id=b.id
+		where b.name = #{categoryname} limit 3;
+	</select>
+	
+</mapper> 

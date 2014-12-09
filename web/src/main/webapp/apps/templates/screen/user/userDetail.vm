@@ -1,0 +1,38 @@
+<div class="container">
+    <form id="searchForm" class="form-horizontal">
+      <div class="row">
+        <div class="control-group span8">
+          <label class="control-label">用户编号：</label>
+          <div class="controls">
+            $!user.userId
+          </div>
+        </div>
+        <div class="control-group span8">
+          <label class="control-label">用户名：</label>
+          <div class="controls">
+           	$!user.userName
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="control-group span9">
+          <label class="control-label">创建时间：</label>
+          <div class="controls">
+          	$!createDate
+          </div>
+        </div>
+        #if($!user.status == "0")
+         <div class="control-group span9">
+          <label class="control-label">用户状态：</label>
+          <div class="controls">
+          		正常
+          </div>
+        </div>
+        #end
+      </div>
+    </form>
+ 
+    <div class="search-grid-container">
+      <div id="grid"></div>
+    </div>
+</div>

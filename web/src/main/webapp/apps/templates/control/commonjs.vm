@@ -1,0 +1,4 @@
+<script type="text/javascript" src="/assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript" src="/assets/js/bui-min.js"></script>
+<!-- 如果不使用页面内部跳转，则下面 script 标签不需要,同时不需要引入 common/page -->
+<script type="text/javascript" src="/assets/js/config.js"></script>

@@ -1,0 +1,41 @@
+<script>
+     BUI.use('common/main',function(){
+      var config = [{
+          id:'menu',
+           homePage : 'main-log',  
+          menu:[{                              
+              text:'首页',
+	          items:[
+	            {id:'main-log',text:'首页',href:'/kflog/kflogList.htm'}
+	          ]
+            },
+            #if($!user.role.roleCode == "administrator")
+            {
+              text:'用户管理',
+              items:[
+                {id:'main-user',text:'用户管理',href:'/user/userList.htm'}
+              ]
+          	},
+          	#end
+          	{
+            	  text:'amazon数据管理',
+  	          items:[
+  	          	{id:'main-goodsUrl',text:'商品url管理',href:'/datafetch/goodsUrlManager.htm'},
+  	          	{id:'main-dz-log',text:'pageList管理',href:'/datafetch/test.htm'},
+  	            {id:'main-dz-z',text:'item管理',href:'/dz/checkAccount.htm'},
+  	          ]
+              } ,
+              {
+                  text:'下载',
+                  items:[
+                    {id:'main-download',text:'产品下载',href:'/download/item_download.htm'}
+                  ]
+              	}
+            ]
+          }];
+      new PageUtil.MainPage({
+        modulesConfig : config
+      });
+    });
+ 
+</script>

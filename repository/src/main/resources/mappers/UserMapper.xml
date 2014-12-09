@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boredou.mercury.repository.dao.UserDao">
+
+	<resultMap id="UserMapper" type="com.boredou.mercury.repository.entity.User">
+		<id property="userId" column="user_id" />
+		<result property="userName" column="user_name" />
+		<result property="password" column="password" />
+		<result property="createDate" column="create_date" />
+		<result property="status" column="status" />
+	</resultMap>
+	
+	<!-- 查询User列表-->
+	<select id="getUserList" resultMap="UserMapper">
+		select * from TAB_USER where status = 0
+	</select>
+	
+	<!-- 多条件User列表-->
+	<select id="queryUserListByInfo" parameterType="User" resultMap="UserMapper">
+		select * from TAB_USER where status = 0 
+		<if test="userId != null">
+			and user_id = #{userId}
+		</if>
+		<if test="userName != null and userName != ''">
+			and user_name = #{userName}
+		</if>
+		<if test="startDate != null and startDate !=''">
+			and create_date >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate !=''">
+		<![CDATA[
+			and create_date <= #{endDate}
+		]]>
+		</if>
+			order by create_date desc
+	</select>
+	<!-- 分页 -->
+	<select id="queryUserCountByInfo" parameterType="User" resultType="_int">
+		select count(*) from TAB_USER where status = 0
+		<if test="userId != null">
+			and user_id = #{userId}
+		</if>
+		<if test="userName != null and userName != ''">
+			and user_name = #{userName}
+		</if>
+		<if test="startDate != null and startDate !=''">
+			and create_date >= #{startDate}
+		</if>
+		<if test="endDate != null and endDate !=''">
+		<![CDATA[
+			and create_date <= #{endDate}
+		]]>
+		</if>
+			order by create_date desc
+	</select>
+	
+	<!-- 根据用户名查询用户 -->
+	<select id="getUserByUserName" parameterType="string" resultMap="UserMapper">
+		select * from TAB_USER where user_name=#{userName} and status = 0
+	</select>
+	
+	<!-- 根据用户ID查询用户 -->
+	<select id="getUserByUserId" parameterType="Long" resultMap="UserMapper">
+		select * from TAB_USER where user_id=#{userId} and status = 0
+	</select>
+	
+	<!-- 添加User-->
+	<insert id="addUser" parameterType="User">
+		<selectKey resultType="java.lang.Long" order="AFTER" keyProperty="userId">
+		SELECT LAST_INSERT_ID() AS user_id
+		</selectKey>
+		insert into TAB_USER (user_name,password,create_date,status) VALUES(#{userName},#{password},now(),#{status})
+	</insert>
+	
+	<!-- 修改用户信息 -->
+	<update id="updateUser" parameterType="User">
+		update TAB_USER set user_name = #{userName} where id=#{id}
+	</update>
+	
+	<!-- 删除用户信息 -->
+	<update id="deleteUser" parameterType="User">
+		update TAB_USER set status = 1 where user_id=#{userId}
+	</update>
+	
+</mapper> 

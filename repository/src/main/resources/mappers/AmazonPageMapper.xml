@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boredou.mercury.repository.dao.AmazonPageDAO" >
+
+	<resultMap id="AmazonPageResultMap" type="com.boredou.mercury.repository.entity.AmazonPageDO" >
+    <id property="id" column="id" />
+    <result property="gmtCreated" column="gmt_created"/>
+    <result property="gmtModified" column="gmt_modified"/>
+    
+	<result property="pageUrl" column="page_url" />
+	<result property="belongtoCategoryId" column="belongto_category_id" />
+  </resultMap>
+	
+	<sql id="allCol" >
+		id,gmt_created,gmt_modified,page_url,belongto_category_id
+	</sql>
+	
+	<insert id="addAmazonPageDO" parameterType="AmazonPageDO">
+		insert into amazon_page (gmt_created , gmt_modified , page_url , belongto_category_id) 
+		VALUES(now(),now(),#{pageUrl},#{belongtoCategoryId})
+	</insert>
+	
+<!-- 	<update id="updateAmazonPageDO" parameterType="int">
+		update amazon_category
+		<set>
+			,gmt_modified = now()
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update> -->
+	
+	<!-- <select id="getAmazonPageListByCategoryId" parameterType="int" >
+		select <include refid="allCol"/> 
+		from amazon_page 
+		<where>
+			<if test="goodsType != null and goodsType !='' ">
+				and goods_type = #{goodsType}
+			</if>
+			<if test="sex != null and sex !='' ">
+				and sex = #{sex}
+			</if>
+			<if test="display != null and display !='' ">
+				and display = #{display}
+			</if>
+		</where>
+	</select> -->
+	
+</mapper> 

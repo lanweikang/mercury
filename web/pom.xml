@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.boredou.mercury</groupId>
+		<artifactId>mercury</artifactId>
+		<version>1.0</version>
+	</parent>
+
+	<!-- ================================================= -->
+	<!-- 定义子项目 -->
+	<!-- ================================================= -->
+	<artifactId>mercury-web</artifactId>
+	<packaging>war</packaging>
+	<name>mercury web</name>
+
+	<properties>
+		<warExplodedDirectory>target/exploded/${parent.artifactId}.war</warExplodedDirectory>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>${parent.groupId}</groupId>
+			<artifactId>mercury-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba.citrus</groupId>
+			<artifactId>citrus-webx-all</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity-tools</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>jexcelapi</groupId>
+			<artifactId>jxl</artifactId>
+		</dependency>
+ 
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+        </dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>${parent.artifactId}</finalName>
+
+		<plugins>
+
+			<plugin>
+				<groupId>com.alibaba.citrus.tool</groupId>
+				<artifactId>autoconfig-maven-plugin</artifactId>
+				<version>1.2</version>
+				<configuration>
+					<!-- 要进行AutoConfig的目标文件，默认为 ${project.artifact.file}。 <dest>${project.artifact.file}</dest> -->
+					<!-- 配置后，是否展开目标文件，默认为false，不展开 。 -->
+					<exploding>true</exploding>
+					<!-- <userProperties>spam_online_local.properties</userProperties> -->
+					<userProperties>src/main/antx/antx.properties</userProperties>
+					<!-- 展开到指定目录，默认为 ${project.build.directory}/${project.build.finalName}。 -->
+
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>autoconfig</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.alibaba.citrus.tool</groupId>
+				<artifactId>maven-autoconfig-plugin</artifactId>
+				<version>1.0.10</version>
+
+				<!-- ================================================= -->
+				<!-- explod 编译包，用来开发测试使用 -->
+				<!-- ================================================= -->
+				<configuration>
+					<userProperties>src/main/antx/antx.properties</userProperties>
+					<exploding>true</exploding>
+					<explodedDirectory>
+						${warExplodedDirectory}
+					</explodedDirectory>
+				</configuration>
+
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>autoconfig</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

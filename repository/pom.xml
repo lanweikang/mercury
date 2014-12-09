@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ================================================= -->
+    <!-- 定义父项目 -->
+    <!-- ================================================= -->
+    <parent>
+        <groupId>com.boredou.mercury</groupId>
+        <artifactId>mercury</artifactId>
+        <version>1.0</version>
+    </parent>
+
+    <!-- ================================================= -->
+    <!-- 定义子项目 -->
+    <!-- ================================================= -->
+    <artifactId>mercury-repository</artifactId>
+    <packaging>jar</packaging>
+    <name>mercury repository</name>
+
+    <!-- ================================================= -->
+    <!-- 定义子项目的依赖 -->
+    <!-- ================================================= -->
+    <dependencies>
+    
+    	<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.1</version>
+			</dependency>
+        <!-- FileItem 文件上传 author:蓝伟康 -->
+        <dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<!-- dbcp数据库连接池 -->
+		<dependency>
+			<groupId>com.jolbox</groupId>
+			<artifactId>bonecp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.jolbox</groupId>
+			<artifactId>bonecp-spring</artifactId>
+		</dependency>
+        <!-- dbcp end-->
+        <!-- mybatis ORM框架 -->
+        <dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+		</dependency>
+		<dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
+	        <groupId>com.github.miemiedev</groupId>
+	        <artifactId>mybatis-paginator</artifactId>
+	    </dependency>
+    </dependencies>
+
+</project>

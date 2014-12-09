@@ -1,0 +1,199 @@
+<div class="container">
+    
+    <div class="search-grid-container">
+      <div id="grid"></div>
+    </div>
+    
+<div id="addContent" class="hide">
+    <form id="J_Form" class="form-horizontal">
+        <div class="row">
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>添加时间：</label>
+            <div class="controls">
+                    <input id="t2" name="createDate" data-rules="{required:true}" type="text" data-rules="{required:false}" class="input-normal control-text calendar calendar-time">
+                </div>
+          </div>
+        </div>
+        <div class="row">
+          
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>白班/夜班：</label>
+            <div class="controls">
+              <select  data-rules="{required:true}"  name="workStatus" class="input-normal"> 
+                <option value="">请选择</option>
+                <option value="1">白班</option>
+                <option value="2">夜班</option>
+              </select>
+            </div>
+          </div>
+        </div>       
+        <div class="row">
+          <div class="control-group span15">
+            <label class="control-label">日志内容：</label>
+            <div class="controls control-row4">
+              <textarea name="remarks" class="input-large" type="text"></textarea>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="kfLogId">
+      </form>
+</div>
+
+$control.setTemplate("commonjs.vm")
+ <script type="text/javascript">
+          var Calendar = BUI.Calendar
+          var datepicker = new Calendar.DatePicker({
+            trigger:'#t1',
+            dateMask : 'yyyy/mm/dd',
+            autoRender : true
+          });
+ 
+      var datepicker1 = new Calendar.DatePicker({
+            trigger:'#t2',
+            showTime : true,
+            dateMask : 'yyyy/mm/dd HH:MM:ss',
+            autoRender : true
+          });
+    </script>
+<script type="text/javascript">
+  BUI.use(['common/search','common/page'],function (Search) {
+    var enumObj = {"1":"白班","2":"夜班"},
+     editing = new BUI.Grid.Plugins.DialogEditing({
+        contentId : 'addContent', //设置隐藏的Dialog内容
+        autoSave : true, //添加数据或者修改数据时，自动保存
+        triggerCls : 'btn-edit',
+         editor : {
+            success : function(){ //点击确认的时候触发，可以进行异步提交
+                var editor = this,
+                        record = editing.get('record'), // 获取编辑的记录
+                        data = editor.getValue(); //编辑完成的记录
+                editor.valid();
+                if(editor.isValid()){
+                    addLog(BUI.mix(record,data),editor,search);
+                }
+                /*var form = $('#J_Form'); //也可以直接使用表单同步提交的方式
+                form.submit();
+                */
+            }
+        }
+      }),
+      columns = [
+          {title:'日志单号',dataIndex:'kfLogId',width:60},  
+          {title:'用户名',dataIndex:'userName',width:80},        
+          {title:'添加时间',dataIndex:'createDate',width:130,renderer:BUI.Grid.Format.datetimeRenderer},
+          {title:'白班/夜班',dataIndex:'workStatus',width:80,renderer:BUI.Grid.Format.enumRenderer(enumObj)},          
+          {title:'日志内容',dataIndex:'remarks',width:750},
+                  
+          {title:'操作',dataIndex:'kfLogId',width:100,renderer : function(value){
+              editStr = '<span class="grid-command btn-edit" title="修改">修改</span>',
+              delStr = '<span class="grid-command btn-del" title="删除">删除</span>';//页面操作不需要使用Search.createLink
+            return editStr + delStr;
+          }}
+        ],
+      store = Search.createStore('/kflog/kflogList/search.do'),
+      gridCfg = Search.createGridCfg(columns,{
+        tbar : {
+          items : [
+           	{text : '<i class="icon-plus"></i>添加记录',btnCls : 'button button-small btn-add',handler : addFunction}
+          ]
+        },
+        plugins : [editing,BUI.Grid.Plugins.CheckSelection,BUI.Grid.Plugins.AutoFit] // 插件形式引入多选表格
+      });
+ 
+    var  search = new Search({
+        store : store,
+        gridCfg : gridCfg
+      }),
+      grid = search.get('grid');
+
+
+
+     // 添加操作
+    function addFunction(){
+      var newData = {isNew : true}; //标志是新增加的记录
+      editing.add(newData,'name'); //添加记录后，直接编辑
+    }
+    
+    // 添加记录或修改记录
+    function addLog(record,editor,search){   	
+	    	$.ajax({
+	            url:'/kflog/kflogList/addLog.do',
+	            type:'post',
+	            dataType:'json',
+	            cache:false,
+	            async:false,
+	            data:record,
+	            success:function(data){
+	                if(data.success){
+	                    editor.close();
+	                    search.load();
+	                }else{
+	                    alert(data.error);
+	                }
+	                return false;
+	            }
+       		 });
+        
+    }
+    
+    var Overlay = BUI.Overlay
+    var dialog = new Overlay.Dialog({
+        title:'审核状态',
+        width:500,
+        height:300,
+        //配置DOM容器的编号
+        contentId:'content',
+        success:function () {
+         	goAudits();
+        }
+    });
+ 
+ 	//删除操作
+    function delFunction(){
+      var selections = grid.getSelection();
+      delItems(selections);
+    }
+ 
+    function delItems(items){
+      var ids = [];
+      BUI.each(items,function(item){
+        ids.push(item.kfLogId);
+      });
+ 
+      if(ids.length){
+        BUI.Message.Confirm('确认要删除选中的记录么？',function(){
+          $.ajax({
+            url : '/kflog/kflogList/delKfLog.do',
+            dataType : 'json',
+            data : {'ids' : ids.toString()},
+            success : function(data){
+              if(data.success){ //删除成功
+                search.load();
+              }else{ //删除失败
+                BUI.Message.Alert('删除失败！');
+              }
+            },
+            error:function (XMLHttpRequest,textStatus){
+				if(XMLHttpRequest.status==200 && textStatus == "parsererror"){
+					 alert("对不起，您无此操作权限");
+				}
+		 	}
+        });
+        },'question');
+      }
+    }
+    
+    //监听事件，删除一条记录
+    grid.on('cellclick',function(ev){
+      var sender = $(ev.domTarget); //点击的Dom
+      if(sender.hasClass('btn-del')){
+        var record = ev.record;
+        delItems([record]);
+      }else if(sender.hasClass("btn-add")){
+        var record = ev.record;
+        getAddOtherItems(record,sender);
+      }
+    });
+  });
+
+</script>

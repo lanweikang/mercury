@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+    <group>
+        <!-- webx parameter config -->
+        <property name="mercury.domain.name" defaultValue="127.0.0.1"  description="域名"/>
+        
+        <property name="mercury.webx.prodection.module" defaultValue="true"  description="webx框架是否为产品模式启动"/>
+        <property name="mercury.root.path" defaultValue="/home/admin/mercury"  description="项目文件根路径"/>
+        <property name="mercury.logging.charset" defaultValue="UTF-8"  description="日志编码"/>
+        <property name="mercury.logging.level" defaultValue="INFO"  description="日志级别"/>
+        <property name="mercury.logging.root" defaultValue="${mercury.root.path}/logs"  description="日志路径"/>
+        
+        <property name="mercury.mysql.url" defaultValue="jdbc:mysql://localhost/refund_record"  description="数据库连接"/>
+        <property name="mercury.mysql.user" defaultValue="root"  description="数据库用户名"/>
+        <property name="mercury.mysql.pass" defaultValue="0906"  description="数据库密码"/>
+    </group>
+    
+	<script>
+        <!-- module common config xml  -->
+        <generate template="WEB-INF/web.xml" charset="UTF-8"/>
+        <generate template="WEB-INF/webx.xml" charset="UTF-8"/>
+        <generate template="WEB-INF/logback.xml" charset="UTF-8"/>
+        <generate template="WEB-INF/common/dal.xml" charset="UTF-8"/>
+        <generate template="WEB-INF/common/uris.xml" charset="UTF-8"/>
+    </script>
+</config>

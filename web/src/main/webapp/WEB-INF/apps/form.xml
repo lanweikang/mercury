@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:p="http://www.springframework.org/schema/p"
+             xmlns:services="http://www.alibaba.com/schema/services"
+             xmlns:fm-conditions="http://www.alibaba.com/schema/services/form/conditions"
+             xmlns:fm-validators="http://www.alibaba.com/schema/services/form/validators"
+             xsi:schemaLocation="
+                 http://www.alibaba.com/schema/services http://localhost:8080/schema/services.xsd
+                 http://www.alibaba.com/schema/services/form/conditions http://localhost:8080/schema/services-form-conditions.xsd
+                 http://www.alibaba.com/schema/services/form/validators http://localhost:8080/schema/services-form-validators.xsd
+                 http://www.springframework.org/schema/beans http://localhost:8080/schema/www.springframework.org/schema/beans/spring-beans.xsd
+             ">
+
+    <services:form postOnlyByDefault="true" converterQuiet="true">
+        <property-editor-registrar
+            class="com.alibaba.citrus.service.configuration.support.CustomDateRegistrar"
+            p:format="yyyy-MM-dd">
+        </property-editor-registrar>
+        <!--
+          - ===============================================
+          - 用来检查csrf token。
+          - ===============================================
+         -->
+        <group name="csrfCheck">
+            <field name="csrfToken">
+                <fm-validators:csrf-validator>
+                    <message>提交的数据已过期</message>
+                </fm-validators:csrf-validator>
+            </field>
+        </group>
+        
+        <!-- apps登录form配置 -->
+        <group name="loginForm" extends="csrfCheck">
+            <field name="userName" displayName="用户名">
+                <fm-validators:required-validator>
+                    <message>请填写用户名</message>
+                </fm-validators:required-validator>
+            </field>
+
+            <field name="password" displayName="用户密码">
+                <fm-validators:required-validator>
+                    <message>请填写密码</message>
+                </fm-validators:required-validator>
+            </field>
+            <field name="redirectURL"/>
+        </group>
+        <group name="caifutongSearchForm" extends="csrfCheck">
+            <field name="tradeNumber" displayName="交易流水号"></field>
+            <field name="prepaidNumber" displayName="充值号码"></field>
+            <field name="startDate" displayName="开始日期">
+                <fm-validators:regexp-validator pattern="^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$">
+                    <message>${displayName}请按照规定格式书写，如：2014-4-1</message>
+                </fm-validators:regexp-validator>
+            </field>
+            <field name="endDate" displayName="结束日期">
+                <fm-validators:regexp-validator pattern="^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$">
+                    <message>${displayName}请按照规定格式书写，如：2014-4-1</message>
+                </fm-validators:regexp-validator>
+            </field>
+        </group>
+        <group name="uploadFileForm" extends="csrfCheck">
+            <field name="uploadFile" displayName="上传文件">
+                <fm-validators:required-validator>
+                    <message>请选择文件</message>
+                </fm-validators:required-validator>
+            </field>
+        </group>
+    </services:form>
+
+</beans:beans>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="GBK"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
+	default-lazy-init="false">
+
+	<bean name="poolHttpClient" class="cn.weili.util.http.client.SimplePoolHttpClient"
+		init-method="init" destroy-method="close">
+		<property name="minConn" value="32" />
+	</bean>
+	<bean id="AmazonDailyTask" class="task.AmazonDailyTask">
+		<property name="hc" ref="poolHttpClient"></property>
+	</bean>
+	
+	<bean id="watchFetch" class="com.boredou.mercury.web.task.util.datafetch.WatchFetch" >
+	</bean>
+	
+	<bean id="shoesFetch" class="com.boredou.mercury.web.task.util.datafetch.ShoesFetch" >
+		<property name="hc" ref="poolHttpClient"></property>
+	</bean>
+	
+	
+	<bean id="AutoSwitchFetch" class="com.boredou.mercury.web.task.util.datafetch.AutoSwitchFetch">
+		<property name="fetchMap">
+			<map>
+				<entry key="watch" value-ref="watchFetch" />
+				<entry key="shoes" value-ref="shoesFetch" />
+			</map>
+		</property>
+	</bean>
+
+	<bean id="AmazonDailyTaskQtzJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="AmazonDailyTask" />
+		</property>
+		<property name="targetMethod">
+			<value>start</value>
+		</property>
+	</bean>
+
+	<bean id="TriggerBean1" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail" ref="AmazonDailyTaskQtzJob"></property>
+		<!-- when touch off -->
+		<property name="cronExpression" value="*/30 * * * * ?"></property>
+	</bean>
+
+	<bean id="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="AmazonDailyTaskQtzJob" />
+		<property name="startDelay" value="10000" /><!-- 调度工厂实例化后，经过0秒开始执行调度 -->
+		<property name="repeatInterval" value="1200000" /><!-- 这里改成每天什么时候执行 -->
+	</bean>
+
+	<bean class="com.boredou.mercury.web.task.util.FetchPageUtil">
+		<property name="hc" ref="poolHttpClient"></property>
+	</bean>
+	<bean class="com.boredou.mercury.web.task.util.FetchItemUtil">
+		<property name="hc" ref="poolHttpClient"></property>
+		<property name="fetchMethod" ref="AutoSwitchFetch"></property>
+	</bean>
+	<bean class="com.boredou.mercury.web.task.util.ItemUtil">
+		<property name="hc" ref="poolHttpClient"></property>
+	</bean>
+	<bean id="mytask" class="com.boredou.mercury.web.task.LanTask">
+		<property name="hc" ref="poolHttpClient"></property>
+	</bean>
+	<bean id="MyJob"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="mytask" />
+		</property>
+		<property name="targetMethod">
+			<value>start</value>
+		</property>
+	</bean>
+	<bean id="simpleTask" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+		<property name="jobDetail" ref="MyJob" />
+		<property name="startDelay" value="10000" /><!-- 调度工厂实例化后，经过0秒开始执行调度 -->
+		<property name="repeatInterval" value="1200000" /><!-- 这里改成每天什么时候执行 -->
+	</bean>
+
+	<bean id="startQuertz" lazy-init="false" autowire="no"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<!-- <ref bean="TriggerBean1" /> -->
+				<!-- <ref bean="simpleTrigger" /> -->
+				<ref bean="simpleTask" />
+			</list>
+		</property>
+	</bean>
+
+</beans>

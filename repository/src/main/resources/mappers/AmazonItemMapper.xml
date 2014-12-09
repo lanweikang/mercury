@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boredou.mercury.repository.dao.AmazonItemDAO" >
+
+	<resultMap id="AmazonItemResultMap"
+		type="com.boredou.mercury.repository.entity.AmazonItemDO">
+		<id property="id" column="id" />
+		<result property="gmtCreated" column="gmt_created" />
+		<result property="gmtModified" column="gmt_modified" />
+	
+		<result property="name" column="name" />
+		<result property="asin" column="asin" />
+		<result property="itemUrl" column="item_url" />
+		<result property="lastHttpCode" column="last_http_code" />
+		<result property="wholeContent" column="whole_content" />
+		<result property="belongtoCategoryId" column="belongto_category_id" />
+	</resultMap>
+
+	<resultMap id="AmazonCategoryResultMap"
+		type="com.boredou.mercury.repository.entity.AmazonCategoryDO">
+		<id property="id" column="id" />
+		<result property="gmtCreated" column="gmt_created" />
+		<result property="gmtModified" column="gmt_modified" />
+
+		<result property="name" column="name" />
+		<result property="searchUrl" column="search_url" />
+		<result property="goodsType" column="goods_type" />
+		<result property="sex" column="sex" />
+		<result property="display" column="display" />
+	</resultMap>
+	
+	<sql id="allCol" >
+		id,gmt_created,gmt_modified,name,asin,item_url,last_http_code,whole_content,belongto_category_id
+	</sql>
+	
+	<sql id="allColOfA" >
+		a.id,a.gmt_created,a.gmt_modified,a.asin,item_url,a.last_http_code,a.whole_content,a.belongto_category_id
+	</sql>
+	
+	<insert id="addAmazonItemDO" parameterType="AmazonItemDO">
+		insert into amazon_item (gmt_created , gmt_modified ,name,asin , item_url , last_http_code , whole_content , belongto_category_id ) 
+		VALUES(now(),now(),#{name},#{asin},#{itemUrl},#{lastHttpCode},#{wholeContent},#{belongtoCategoryId})
+	</insert>
+	
+	
+	<update id="updateAmazonItemDOByAsin" parameterType="AmazonItemDO">
+		update amazon_item
+		<set>
+			<if test="name != null and name !='' ">
+				name = #{name},
+			</if>
+			<if test="itemUrl != null and itemUrl !='' ">
+				item_url = #{itemUrl},
+			</if>
+			<if test="lastHttpCode != null and lastHttpCode !='' ">
+				last_http_code = #{lastHttpCode},
+			</if>
+			<if test="wholeContent != null and wholeContent !='' ">
+				whole_content = #{wholeContent},
+			</if>
+			<if test="belongtoCategoryId != null and belongtoCategoryId !='' ">
+				belongto_category_id = #{belongtoCategoryId},
+			</if>
+			gmt_modified = now()
+		</set>
+		<where>
+			asin=#{asin}
+		</where>
+	</update>
+	
+	
+	<select id="getAmazonItemList" parameterType="AmazonCategoryDO" resultMap="AmazonItemResultMap">
+		select <include refid="allColOfA"/>
+		from amazon_item a left join  amazon_category b
+		on a.belongto_category_id=b.id
+		<where>
+			<if test="goodsType != null and goodsType !='' ">
+				and goods_type = #{goodsType}
+			</if>
+			<if test="sex != null and sex !='' ">
+				and sex = #{sex}
+			</if>
+			<if test="display != null and display !='' ">
+				and display = #{display}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getAmazonItemDOByAsinLimit1" parameterType="AmazonCategoryDO" resultMap="AmazonItemResultMap">
+		select <include refid="allCol"/>
+		from amazon_item 
+		<where>
+			<if test="asin != null and asin !='' ">
+				and asin = #{asin}
+			</if>
+		</where>
+		limit 1
+	</select>
+	
+</mapper> 

@@ -1,0 +1,27 @@
+<div class="container">
+    <form id="searchForm" class="form-horizontal">
+      <div class="row">
+        <div class="control-group span8">
+          <label class="control-label">用户姓名：</label>
+          <div class="controls">
+            <input type="text" class="control-text" name="userName">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="control-group span9">
+          <label class="control-label">用户角色：</label>
+          <div class="controls">
+            <input type="text" class="control-text" name="roles"><span>
+          </div>
+        </div>
+        <div class="span3 offset2">
+          <button  type="button" id="addBtn" class="button button-primary">添加</button>
+        </div>
+      </div>
+    </form>
+ 
+    <div class="search-grid-container">
+      <div id="grid"></div>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd" 
+       default-autowire="byName" >
+    
+    
+
+    <bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="jdbcUrl" value="${mercury.mysql.url}"/>
+        <property name="username" value="${mercury.mysql.user}"/>
+        <property name="password" value="${mercury.mysql.pass}"/>
+        <property name="idleConnectionTestPeriodInSeconds" value="14400"/>
+        <property name="idleMaxAgeInSeconds" value="3600"/>
+        <property name="maxConnectionsPerPartition" value="4"/>
+        <property name="minConnectionsPerPartition" value="1"/>
+        <property name="partitionCount" value="2"/>
+        <property name="acquireIncrement" value="3"/>
+        <property name="statementsCacheSize" value="100"/>
+        <property name="releaseHelperThreads" value="3"/>
+    </bean>
+    
+    
+    <bean id="ItemDownloadService" class="com.boredou.mercury.server.service.impl.ItemDownloadServiceImpl"></bean>
+    <bean id="AmazonCategoryService" class="com.boredou.mercury.server.service.impl.AmazonCategoryServiceImpl"></bean>
+    <bean id="AmazonPageService" class="com.boredou.mercury.server.service.impl.AmazonPageServiceImpl"></bean>
+    <bean id="AmazonItemService" class="com.boredou.mercury.server.service.impl.AmazonItemServiceImpl"></bean>
+    <bean id="AmazonItemInfoService" class="com.boredou.mercury.server.service.impl.AmazonItemInfoServiceImpl"></bean>
+    
+    <bean id="UserService" class="com.boredou.mercury.server.service.impl.UserServiceImpl"></bean>
+    
+    <bean id="KfLogService" class="com.boredou.mercury.server.service.impl.KfLogServiceImpl"></bean>
+    
+    
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!--dataSource属性指定要用到的连接池-->
+		<property name="dataSource" ref="dataSource"/>
+		<!--alias包名  -->
+		<property name="typeAliasesPackage" value="com.boredou.mercury.repository.entity" />
+		<!--configLocation属性指定mybatis的核心配置文件-->
+		<property name="configLocation" value="classpath:mybatis-config.xml"/>
+		<!--mapper文件扫描  -->
+		<property name="mapperLocations" value="classpath*:mappers/*.xml"/>
+	</bean>
+	
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="sqlSessionFactory" ref="sqlSessionFactory" />   
+        <property name="basePackage" value="com.boredou.mercury.repository.dao"/>
+        <!-- 扫描某些类的子类，默认为全部 -->
+        <property name="markerInterface" value="com.boredou.mercury.repository.base.SqlMapper"/>
+    </bean>
+
+	<!-- 定义事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+
+    <!-- 使用annotation定义事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+</beans>

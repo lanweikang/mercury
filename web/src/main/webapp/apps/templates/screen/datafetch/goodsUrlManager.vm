@@ -1,0 +1,23 @@
+<head>
+<script type="text/javascript" src="/assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#download").click(function(){
+		var s = $("#category").val();
+		var link = $("#download").attr("href");
+		alert(s+" lanweikang "+link);
+		$("#download").attr("href",$("#download").attr("href")+"?category="+s);
+	});
+});
+</script>
+</head>
+<br>
+<select id="category">
+<option value="男士手表" >男士手表</option>
+<option value="女士手表" >女士手表</option>
+<option value="女士鞋子(Dansko)" >女士鞋子(Dansko)</option>
+<option value="女士鞋子(cole haan)" >女士鞋子(cole haan)</option>
+</select>
+#set($url = "$appsLink.setTarget('datafetch/goodsUrlManager/download.do')")
+<a id="download" href="$url">${url}下载</a>
+<p id="myid">lanwk</p>

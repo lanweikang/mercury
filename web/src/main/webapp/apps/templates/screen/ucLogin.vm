@@ -1,0 +1,47 @@
+<form name="loginForm" class="ui-form" method="post">
+    #set ($loginGroup = $form.loginForm.defaultInstance)
+    $csrfToken.hiddenField
+    <input type="hidden" name="action" value="UserAction"/>
+    <input type="hidden" name="event_submit_do_login" value="-------"/>
+    <input type="hidden" name="$loginGroup.redirectURL.key" value="$!redirectURL"/>
+
+    <div class="ui-form-title">
+        <h1>商户登录</h1>
+    </div>
+    #if(!$loginGroup.password.valid)
+        <div class="error-box" id="error-box" errortype="">
+            $!loginGroup.password.message
+        </div>
+    #elseif(!$loginGroup.userNick.valid)
+        <div class="error-box" id="error-box" errortype="">
+            $!loginGroup.userNick.message
+        </div>
+
+    #elseif($errorMsg)
+        <div class="error-box" id="error-box" errortype="">
+            $!errorMsg
+        </div>
+    #end
+
+    <div class="login-form-cnt">
+        <fieldset>
+            <div>
+                <label>账户名：</label>
+                <input type="text" tabindex="1" maxlength="100" name="$loginGroup.userNick.key" value="$loginGroup.userNick.value">
+                <div class="ui-form-explain"></div>
+            </div>
+
+            <div>
+                <label desc="登录密码">登录密码：</label>
+                    <span>
+                        <input type="password" tabindex="2"  name="$loginGroup.password.key" value="$loginGroup.password.value" oncontextmenu="return false" onpaste="return false" oncopy="return false" oncut="return false">
+                    </span>
+                <div class="ui-form-explain"></div>
+            </div>
+
+            <div class="fm-item ui-form-item ui-btn-cnt">
+                <input id="btn-submit" seed="B-login-button1" type="submit" class="btn-login" tabindex="4" value="登录">
+            </div>
+        </fieldset>
+    </div>
+</form>

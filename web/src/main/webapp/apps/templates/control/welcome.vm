@@ -1,0 +1,3 @@
+<div class="dl-log">欢迎您，<span class="dl-log-user">$!user.userName</span>
+    <a href="/logout" title="退出系统" class="dl-log-quit">[退出]</a>
+</div>

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.boredou.mercury.repository.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.boredou.mercury.repository.entity.UserDO" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="nick" property="nick" jdbcType="VARCHAR" />
+    <result column="user_type" property="userType" jdbcType="BIT" />
+    <result column="user_status" property="userStatus" jdbcType="BIT" />
+    <result column="login_name" property="loginName" jdbcType="VARCHAR" />
+    <result column="login_pwd" property="loginPwd" jdbcType="VARCHAR" />
+    <result column="app_id" property="appId" jdbcType="VARCHAR" />
+    <result column="app_key" property="appKey" jdbcType="VARCHAR" />
+    <result column="balance" property="balance" jdbcType="INTEGER" />
+    <result column="gmt_created" property="gmtCreated" jdbcType="DATE" />
+    <result column="gmt_modified" property="gmtModified" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, nick, user_type, user_status, login_name, login_pwd, app_id, app_key, balance, 
+    gmt_created, gmt_modified
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.boredou.mercury.repository.entity.UserDO" >
+    insert into user (id, nick, user_type, 
+      user_status, login_name, login_pwd, 
+      app_id, app_key, balance, 
+      gmt_created, gmt_modified)
+    values (#{id,jdbcType=INTEGER}, #{nick,jdbcType=VARCHAR}, #{userType,jdbcType=BIT}, 
+      #{userStatus,jdbcType=BIT}, #{loginName,jdbcType=VARCHAR}, #{loginPwd,jdbcType=VARCHAR}, 
+      #{appId,jdbcType=VARCHAR}, #{appKey,jdbcType=VARCHAR}, #{balance,jdbcType=INTEGER}, 
+      #{gmtCreated,jdbcType=DATE}, #{gmtModified,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.boredou.mercury.repository.entity.UserDO" >
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="nick != null" >
+        nick,
+      </if>
+      <if test="userType != null" >
+        user_type,
+      </if>
+      <if test="userStatus != null" >
+        user_status,
+      </if>
+      <if test="loginName != null" >
+        login_name,
+      </if>
+      <if test="loginPwd != null" >
+        login_pwd,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+      <if test="appKey != null" >
+        app_key,
+      </if>
+      <if test="balance != null" >
+        balance,
+      </if>
+      <if test="gmtCreated != null" >
+        gmt_created,
+      </if>
+      <if test="gmtModified != null" >
+        gmt_modified,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="nick != null" >
+        #{nick,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        #{userType,jdbcType=BIT},
+      </if>
+      <if test="userStatus != null" >
+        #{userStatus,jdbcType=BIT},
+      </if>
+      <if test="loginName != null" >
+        #{loginName,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPwd != null" >
+        #{loginPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="appKey != null" >
+        #{appKey,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null" >
+        #{balance,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreated != null" >
+        #{gmtCreated,jdbcType=DATE},
+      </if>
+      <if test="gmtModified != null" >
+        #{gmtModified,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="userDO" >
+    update user
+    <set >
+      <if test="nick != null" >
+        nick = #{nick,jdbcType=VARCHAR},
+      </if>
+      <if test="userType != null" >
+        user_type = #{userType,jdbcType=BIT},
+      </if>
+      <if test="userStatus != null" >
+        user_status = #{userStatus,jdbcType=BIT},
+      </if>
+      <if test="loginName != null" >
+        login_name = #{loginName,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPwd != null" >
+        login_pwd = #{loginPwd,jdbcType=VARCHAR},
+      </if>
+      <if test="appId != null" >
+        app_id = #{appId,jdbcType=VARCHAR},
+      </if>
+      <if test="appKey != null" >
+        app_key = #{appKey,jdbcType=VARCHAR},
+      </if>
+      <if test="balance != null" >
+        balance = #{balance,jdbcType=INTEGER},
+      </if>
+      <if test="gmtCreated != null" >
+        gmt_created = #{gmtCreated,jdbcType=DATE},
+      </if>
+      <if test="gmtModified != null" >
+        gmt_modified = #{gmtModified,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="userDO" >
+    update user
+    set nick = #{nick,jdbcType=VARCHAR},
+      user_type = #{userType,jdbcType=BIT},
+      user_status = #{userStatus,jdbcType=BIT},
+      login_name = #{loginName,jdbcType=VARCHAR},
+      login_pwd = #{loginPwd,jdbcType=VARCHAR},
+      app_id = #{appId,jdbcType=VARCHAR},
+      app_key = #{appKey,jdbcType=VARCHAR},
+      balance = #{balance,jdbcType=INTEGER},
+      gmt_created = #{gmtCreated,jdbcType=DATE},
+      gmt_modified = #{gmtModified,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
