@@ -1,12 +1,16 @@
 package com.boredou.mercury.web.task.util.datafetch;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSONObject;
 import com.boredou.mercury.repository.entity.AmazonCategoryDO;
 import com.boredou.mercury.repository.entity.AmazonItemDO;
 import com.boredou.mercury.server.service.AmazonItemService;
@@ -24,6 +28,7 @@ public class ShoesFetch implements FetchMethod {
 	private HttpClient hc;
 	@Autowired
 	AmazonItemService amazonItemService;
+	private static int kkk=0;
 	@Override
 	public void fetch(AmazonCategoryDO amazonCategoryDO, String goodsUrl) {
 		// TODO Auto-generated method stub
@@ -33,17 +38,17 @@ public class ShoesFetch implements FetchMethod {
 		AmazonItemDO amazonItemDOResult = new AmazonItemDO();
 		int code = -1;
 		try{
-			ResponseResult result = hc.execute(RequestParams.custom().setUrl(goodsUrl).addHeader(Consts.CHEOME_USER_AGENT).build());
-//			if(result.getRespHeaders().length == 0) return;
+			ResponseResult result = hc.execute(RequestParams.custom().setUrl(goodsUrl).addHeader(Consts.CHEOME_USER_AGENT)
+					.setReadTimeout(HttpClient.DEFAULT_READ_TIMEOUT).build());
 			code = result.getResultCode();
 			String content = StringUtil.trimNotWithNull(result.getValue());
 			amazonItemDOResult.setItemUrl(goodsUrl);
 			amazonItemDOResult.setLastHttpCode(code);
 			amazonItemDOResult.setBelongtoCategoryId(amazonCategoryDO.getId());
 			amazonItemDOResult.setAsin(asin);
-			
+
 			StringBuilder WholeContent = new StringBuilder();
-			
+
 			Matcher mItemName = pattItemName.matcher(content);
 			while(mItemName.find()){
 				String itemName = mItemName.group(1);
@@ -53,6 +58,36 @@ public class ShoesFetch implements FetchMethod {
 				break;
 			}
 			
+			StringBuilder sb = new StringBuilder();
+			Matcher mItemMaterial = pattItemMaterial.matcher(content);
+			while(mItemMaterial.find()){
+				String itemMaterial = mItemMaterial.group(1);
+				itemMaterial = StringUtil.trimNotWithNull(itemMaterial);
+				sb.append(itemMaterial);
+				break;
+			}
+			
+			Matcher mItemMaterialEx = pattItemMaterialEx.matcher(content);
+			while(mItemMaterialEx.find()){
+				String itemMaterialEx = mItemMaterialEx.group(1);
+				itemMaterialEx = StringUtil.trimNotWithNull(itemMaterialEx);
+				sb.append(itemMaterialEx);
+				break;
+			}
+			
+			List<String> materialList = new ArrayList<String>();
+			Matcher mItemMaterialMain = pattItemMaterialMain.matcher(sb.toString());
+			while(mItemMaterialMain.find()){
+				String itemMaterialMain = mItemMaterialMain.group(1);
+				itemMaterialMain = StringUtil.trimNotWithNull(itemMaterialMain);
+				materialList.add(itemMaterialMain);
+			}
+			
+			WholeContent.append(materialList);
+			
+			
+			
+			
 			String itemJson ="";
 			Matcher mItemJson = pattItemJson.matcher(content);
 			while(mItemJson.find()){
@@ -61,23 +96,60 @@ public class ShoesFetch implements FetchMethod {
 				System.out.println("itemJson:"+itemJson);
 				break;
 			}
-			
-			String sid=AmazonSessionUtil.getSid(hc);
-			System.out.println(sid);
-			
-			WholeContent.append(sid);
-			
+
+//			String sid=AmazonSessionUtil.getSid(hc);
+
 			Matcher mItemSid = pattItemSid.matcher(content);
 			while(mItemSid.find()){
 				String itemSid = mItemSid.group(1);
 				itemSid = StringUtil.trimNotWithNull(itemSid);
-				System.out.println("itemSid:"+itemSid);
-				WholeContent.append(" ,itemSid: "+itemSid);
 				break;
 			}
+
+			if(itemJson == null || itemJson == "") return ;
+			JSONObject jsonObject0 = JSONObject.parseObject(itemJson);
+			JSONObject asinJson = JSONObject.parseObject(itemJson).getJSONObject("data").getJSONObject("stateData").getJSONObject("asin_variation_values");
+			Map<String,JSONObject> asinVariationValuesMap = new HashMap<String, JSONObject>();
+			List<String> asinList = new ArrayList<String>();
+			for(String key:asinJson.keySet()){
+				asinVariationValuesMap.put(key, (JSONObject)asinJson.get(key));
+				asinList.add(key);
+			}
+			List<String> colorList = (List<String>) jsonObject0.getJSONObject("data").getJSONObject("stateData").getJSONObject("variation_values").get("color_name");
+			List<String> sizeList = (List<String>) jsonObject0.getJSONObject("data").getJSONObject("stateData").getJSONObject("variation_values").get("size_name");
 			
+			System.out.println("ajax 查询次数:"+asinList.size());
+			int i =0;
+			StringBuilder priceSB = new StringBuilder();
+			Map<String,String> asinAndAjaxUrl = getColorAndSizeUrl(jsonObject0,asinVariationValuesMap);
+			for (String asinAjax : asinList) {
+				ResponseResult ajaxResult = hc.execute(RequestParams.custom().setUrl(asinAndAjaxUrl.get(asinAjax)).addHeader(Consts.CHEOME_USER_AGENT)
+						.setReadTimeout(HttpClient.DEFAULT_READ_TIMEOUT).build());
+				String ajaxResponse = ajaxResult.getValue();
+				Matcher mItemPrice = pattItemPrice.matcher(ajaxResponse);
+				Boolean ajaxBoo = Boolean.FALSE;
+				while(mItemPrice.find()){
+					i++;
+					ajaxBoo = Boolean.TRUE;
+					String itemPrice = mItemPrice.group(1).trim();
+					itemPrice = StringUtil.trimNotWithNull(itemPrice);
+//					priceSB.append("["+"color:"+colorList.get(asinVariationValuesMap.get(asinAjax).getIntValue("color_name"))+itemPrice+"]");
+					priceSB.append("["+"price:"+itemPrice+"]");
+					break;
+				}
+				if(ajaxBoo.equals(Boolean.FALSE)){
+					int colorNum = asinVariationValuesMap.get(asinAjax).getIntValue("color_name");
+					int sizeNum = asinVariationValuesMap.get(asinAjax).getIntValue("size_name");
+					System.out.println("goods- "+goodsUrl+" ,"+colorList.get(colorNum)+","+sizeList.get(sizeNum)+" ,执行ajax获取价格失败，没有匹配到价格，ajaxURL："+asinAndAjaxUrl.get(asinAjax));
+				}
+			}
+			System.out.println("ajax 成功次数:" + i);
+			
+			if(StringUtils.isNotEmpty(priceSB))
+				WholeContent.append(priceSB);
+
 			if(StringUtils.isNotBlank(WholeContent)) amazonItemDOResult.setWholeContent(WholeContent.toString());
-			
+
 		}catch(Exception e){
 			e.getStackTrace();
 			amazonItemDOResult.setLastHttpCode(ResponseResult.READ_TIMEOUT);
@@ -110,6 +182,35 @@ public class ShoesFetch implements FetchMethod {
 
 	//sid
 	private static String expItemSid ="ue_sid='(.*?)'";
-	private static Pattern pattItemSid = Pattern.compile(expItemSid);
+	private static Pattern pattItemSid = Pattern.compile(expItemSid); 
+	
+	//展开的Material 
+	private static String expItemMaterial ="<div id=\"feature-bullets\" class=\"a-section a-spacing-medium a-spacing-top-small\">[\\s\\S]*?<ul class=\"a-vertical a-spacing-none\">([\\s\\S]*?)</ul>";
+	private static Pattern pattItemMaterial = Pattern.compile(expItemMaterial);
+	//未展开的Material 
+	private static String expItemMaterialEx ="<div aria-live=\"polite\" class=\"a-row a-expander-container a-expander-inline-container\">[\\s\\S]*?<ul class=\"a-vertical a-spacing-none\">([\\s\\S]*?)</ul>";
+	private static Pattern pattItemMaterialEx = Pattern.compile(expItemMaterialEx);
+	//全部的Material ，单项
+	private static String expItemMaterialMain ="<li><span class=\"a-list-item\">([\\s\\S]*?)</span></li>";
+	private static Pattern pattItemMaterialMain = Pattern.compile(expItemMaterialMain);
+
+	private String getCompleteAjaxUrl(JSONObject jsonObject , String asin){
+		return "http://www.amazon.com"+jsonObject.getJSONObject("data").getJSONObject("contextMetaData").getJSONObject("full").get("AJAXUrl") +
+				asin +"&isFlushing=2&id="+asin+"&prefetchParam=0&mType=full&dpEnvironment=softlines"
+				;
+	}
+	
+	
+	private static String expItemPrice ="priceblock_ourprice[\\s\\S]*?>([\\s\\S]*?)<";
+//	<span id=\"priceblock_ourprice\" class=\"a-size-medium a-color-price\">$54.85<\/span>\n
+	private static Pattern pattItemPrice = Pattern.compile(expItemPrice);
+
+	private Map<String,String> getColorAndSizeUrl( JSONObject jsonObject,Map<String,JSONObject> asinVariationValuesMap){
+		Map<String,String> asinAndUrl = new HashMap<String, String>();
+		for(String key:asinVariationValuesMap.keySet()){
+			asinAndUrl.put(key, getCompleteAjaxUrl(jsonObject , key) );
+		}
+		return asinAndUrl;
+	} 
 
 }

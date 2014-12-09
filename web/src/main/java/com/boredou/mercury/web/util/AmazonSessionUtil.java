@@ -13,6 +13,14 @@ import cn.weili.util.http.client.SimplePoolHttpClient;
 public class AmazonSessionUtil {
 	@Resource(name="poolHttpClient")
 	private static HttpClient hc ;
+	
+	public static Boolean getSeesion(){
+		SimplePoolHttpClient  simpleHttpClient = (SimplePoolHttpClient) hc;
+		BasicCookieStore basicCookieStore =   simpleHttpClient.getCookieStore();
+//		TODO
+		return null;
+	}
+	
 	public static String getSid(HttpClient hc){
 		if(hc instanceof SimplePoolHttpClient){
 			SimplePoolHttpClient  simpleHttpClient = (SimplePoolHttpClient) hc;
@@ -26,5 +34,12 @@ public class AmazonSessionUtil {
 		}
 		
 		return null;
+	}
+	public static void main(String[] args){
+		System.out.println("lwk...");
+		StringBuilder sb = new StringBuilder();
+		String str = null;
+		sb.append("123").append(str).append("999");
+		System.out.println(sb.toString());
 	}
 }
