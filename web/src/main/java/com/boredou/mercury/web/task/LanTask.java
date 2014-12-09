@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
 
@@ -36,7 +37,7 @@ public class LanTask  {
 	AmazonItemInfoService amazonItemInfoService;
 	@Setter
 	private HttpClient hc;
-	private static ExecutorService executor = Executors.newFixedThreadPool(5);
+	private static ExecutorService executor = Executors.newFixedThreadPool(10);
 	private final static Logger logger = LoggerFactory.getLogger(FetchPageUtil.class);
 
 	public void start(){
@@ -73,13 +74,25 @@ public class LanTask  {
 				itemList = FetchItemUtil.getItemList(pageUrl);
 				System.out.println("item:  "+itemList.get(0));
 				for (String goodsUrl : itemList) {
-					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
+//					单线程方法
+//					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
+//					线程池方法
+					executor.submit(new FetchItem(amazonCategoryDO, goodsUrl));
 				}
 			}
 		}
 
 	}
-	
-	
+	@AllArgsConstructor
+	private class FetchItem implements Runnable{
+		private AmazonCategoryDO amazonCategoryDO;
+		private String goodsUrl;
+		@Override
+		public void run() {
+			System.out.println("新线程执行...");
+			FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
+		}
+		
+	}
 	
 }

@@ -105,7 +105,22 @@ public class PostUtil {
 			System.out.println("itemPrice:"+itemPrice);
 			break;
 		}
-		FileUtil.writeToFile(ajaxString, "C:/Users/Administrator/Desktop/df/log.txt");
+//		FileUtil.writeToFile(ajaxString, "C:/Users/Administrator/Desktop/df/log.txt");
+		System.out.println("-------------------------------------------");
+		Matcher mItemStock = pattItemStock.matcher(ajaxString);
+		String stock ="";
+		while(mItemStock.find()){
+			System.out.println("zhaodaole...");
+			String itemStock = mItemStock.group(1).trim();
+			itemStock = StringUtil.trimNotWithNull(itemStock);
+			System.out.println("itemStock:"+itemStock);
+			stock = itemStock;
+			break;
+		}
+		
+		String str = stock.replaceAll("\\\\n", "");
+		System.out.println("str: "+str);
+		
 		
 		System.out.println("end...");
 	}
@@ -118,12 +133,16 @@ public class PostUtil {
 		private static String expItemJson ="<script type=\"a-state\" data-a-state=\"\\{&quot;key&quot;:&quot;twisterData&quot;\\}\">(.*?)</script>";
 		private static Pattern pattItemJson = Pattern.compile(expItemJson);
 		
-		private static String expItemPrice ="priceblock_ourprice[\\s\\S]*?>([\\s\\S]*?)<";
+		private static String expItemPrice ="priceblock_ourprice[\\s\\S]*?>([\\s\\S]*?)<\\\\/span>\\\\n";
 //		<span id=\"priceblock_ourprice\" class=\"a-size-medium a-color-price\">$54.85<\/span>\n
 		private static Pattern pattItemPrice = Pattern.compile(expItemPrice);
 		
+//		<span class=\"a-size-medium a-color-success\">\n        \n            Only 5 left in stock.\n            \n        \n        \n    
+//				<\/span>
 		
 		
+		private static String expItemStock ="a-size-medium a-color-success\\\\\">([\\s\\S]*?)<";
+		private static Pattern pattItemStock = Pattern.compile(expItemStock);
 		
 		
 		private static String getCompleteAjaxUrl(JSONObject jsonObject , String asin){
