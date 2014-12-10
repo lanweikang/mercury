@@ -28,7 +28,6 @@ public class ShoesFetch implements FetchMethod {
 	private HttpClient hc;
 	@Autowired
 	AmazonItemService amazonItemService;
-	
 	private static int kkk=0;
 	@Override
 	public void fetch(AmazonCategoryDO amazonCategoryDO, String goodsUrl) {
@@ -58,7 +57,7 @@ public class ShoesFetch implements FetchMethod {
 				System.out.println("itemName:"+itemName);
 				break;
 			}
-			
+
 			StringBuilder sb = new StringBuilder();
 			Matcher mItemMaterial = pattItemMaterial.matcher(content);
 			while(mItemMaterial.find()){
@@ -67,7 +66,7 @@ public class ShoesFetch implements FetchMethod {
 				sb.append(itemMaterial);
 				break;
 			}
-			
+
 			Matcher mItemMaterialEx = pattItemMaterialEx.matcher(content);
 			while(mItemMaterialEx.find()){
 				String itemMaterialEx = mItemMaterialEx.group(1);
@@ -75,7 +74,7 @@ public class ShoesFetch implements FetchMethod {
 				sb.append(itemMaterialEx);
 				break;
 			}
-			
+
 			List<String> materialList = new ArrayList<String>();
 			Matcher mItemMaterialMain = pattItemMaterialMain.matcher(sb.toString());
 			while(mItemMaterialMain.find()){
@@ -83,12 +82,12 @@ public class ShoesFetch implements FetchMethod {
 				itemMaterialMain = StringUtil.trimNotWithNull(itemMaterialMain);
 				materialList.add(itemMaterialMain);
 			}
-			
-//			WholeContent.append(materialList);
-			
-			
-			
-			
+
+			WholeContent.append(materialList);
+
+
+
+
 			String itemJson ="";
 			Matcher mItemJson = pattItemJson.matcher(content);
 			while(mItemJson.find()){
@@ -98,7 +97,14 @@ public class ShoesFetch implements FetchMethod {
 				break;
 			}
 
-//			String sid=AmazonSessionUtil.getSid(hc);
+			//			String sid=AmazonSessionUtil.getSid(hc);
+
+			Matcher mItemSid = pattItemSid.matcher(content);
+			while(mItemSid.find()){
+				String itemSid = mItemSid.group(1);
+				itemSid = StringUtil.trimNotWithNull(itemSid);
+				break;
+			}
 
 			if(itemJson == null || itemJson == "") return ;
 			JSONObject jsonObject0 = JSONObject.parseObject(itemJson);
@@ -111,49 +117,41 @@ public class ShoesFetch implements FetchMethod {
 			}
 			List<String> colorList = (List<String>) jsonObject0.getJSONObject("data").getJSONObject("stateData").getJSONObject("variation_values").get("color_name");
 			List<String> sizeList = (List<String>) jsonObject0.getJSONObject("data").getJSONObject("stateData").getJSONObject("variation_values").get("size_name");
-			
-			System.out.println("ajax 查询次数:"+asinList.size());
+
+			System.out.println("ajax 查询次数:"+asinList.size()+" ,goodsUrl: "+goodsUrl);
 			int i =0;
-			StringBuilder ajaxSB = new StringBuilder();
+			StringBuilder priceSB = new StringBuilder();
 			Map<String,String> asinAndAjaxUrl = getColorAndSizeUrl(jsonObject0,asinVariationValuesMap);
 			for (String asinAjax : asinList) {
-				ResponseResult ajaxResult = hc.execute(RequestParams.custom().setUrl(asinAndAjaxUrl.get(asinAjax)).addHeader(Consts.CHEOME_USER_AGENT)
-						.setReadTimeout(HttpClient.DEFAULT_READ_TIMEOUT).build());
-				String ajaxResponse = ajaxResult.getValue();
-				Matcher mItemPrice = pattItemPrice.matcher(ajaxResponse);
-				Boolean ajaxBoo = Boolean.FALSE;
-				int colorNum = asinVariationValuesMap.get(asinAjax).getIntValue("color_name");
-				int sizeNum = asinVariationValuesMap.get(asinAjax).getIntValue("size_name");
-				ajaxSB.append("[("+colorList.get(colorNum)+","+sizeList.get(sizeNum)+") ");
-				while(mItemPrice.find()){
-					i++;
-					ajaxBoo = Boolean.TRUE;
-					String itemPrice = StringUtil.trimNotWithNull(mItemPrice.group(1));
-//					priceSB.append("["+"color:"+colorList.get(asinVariationValuesMap.get(asinAjax).getIntValue("color_name"))+itemPrice+"]");
-					ajaxSB.append(",price:"+itemPrice);
-					break;
+				try{
+					ResponseResult ajaxResult = hc.execute(RequestParams.custom().setUrl(asinAndAjaxUrl.get(asinAjax)).addHeader(Consts.CHEOME_USER_AGENT)
+							.setReadTimeout(HttpClient.DEFAULT_READ_TIMEOUT).build());
+					String ajaxResponse = ajaxResult.getValue();
+					Matcher mItemPrice = pattItemPrice.matcher(ajaxResponse);
+					Boolean ajaxBoo = Boolean.FALSE;
+					while(mItemPrice.find()){
+						i++;
+						ajaxBoo = Boolean.TRUE;
+						String itemPrice = mItemPrice.group(1).trim();
+						itemPrice = StringUtil.trimNotWithNull(itemPrice);
+						//					priceSB.append("["+"color:"+colorList.get(asinVariationValuesMap.get(asinAjax).getIntValue("color_name"))+itemPrice+"]");
+						priceSB.append("["+"price:"+itemPrice+"]");
+						break;
+					}
+					if(ajaxBoo.equals(Boolean.FALSE)){
+						int colorNum = asinVariationValuesMap.get(asinAjax).getIntValue("color_name");
+						int sizeNum = asinVariationValuesMap.get(asinAjax).getIntValue("size_name");
+						System.out.println("goods- "+goodsUrl+" ,"+colorList.get(colorNum)+","+sizeList.get(sizeNum)+" ,执行ajax获取价格失败，没有匹配到价格，ajaxURL："+asinAndAjaxUrl.get(asinAjax));
+					}
+				}catch(Exception e1){
+					System.out.println("ajax请求发生异常");
+					e1.getStackTrace();
 				}
-				if(ajaxBoo.equals(Boolean.FALSE)){
-					System.out.println("goods- "+goodsUrl+" ,"+colorList.get(colorNum)+","+sizeList.get(sizeNum)+" ,执行ajax获取价格失败，没有匹配到价格，ajaxURL："+asinAndAjaxUrl.get(asinAjax));
-				}
-				
-				Matcher mItemStock = pattItemStock.matcher(ajaxResponse);
-				String itemStock ="";
-				while(mItemStock.find()){
-					itemStock = StringUtil.trimNotWithNull(mItemStock.group(1));
-					System.out.println(",itemStock:"+itemStock);
-					ajaxSB.append("itemStock:"+itemStock.replaceAll("\\\\n", "").trim());
-					break;
-				}
-				ajaxSB.append("]");
-				
-				
-				
 			}
-			System.out.println("ajax 成功次数:" + i);
-			
-			if(StringUtils.isNotEmpty(ajaxSB))
-				WholeContent.append(ajaxSB);
+			System.out.println("ajax 成功次数:" + i +" ,goodsUrl: "+goodsUrl);
+
+			if(StringUtils.isNotEmpty(priceSB))
+				WholeContent.append(priceSB);
 
 			if(StringUtils.isNotBlank(WholeContent)) amazonItemDOResult.setWholeContent(WholeContent.toString());
 
@@ -190,7 +188,7 @@ public class ShoesFetch implements FetchMethod {
 	//sid
 	private static String expItemSid ="ue_sid='(.*?)'";
 	private static Pattern pattItemSid = Pattern.compile(expItemSid); 
-	
+
 	//展开的Material 
 	private static String expItemMaterial ="<div id=\"feature-bullets\" class=\"a-section a-spacing-medium a-spacing-top-small\">[\\s\\S]*?<ul class=\"a-vertical a-spacing-none\">([\\s\\S]*?)</ul>";
 	private static Pattern pattItemMaterial = Pattern.compile(expItemMaterial);
@@ -206,18 +204,11 @@ public class ShoesFetch implements FetchMethod {
 				asin +"&isFlushing=2&id="+asin+"&prefetchParam=0&mType=full&dpEnvironment=softlines"
 				;
 	}
-	
-	
-	private static String expItemPrice ="priceblock_ourprice[\\s\\S]*?>([\\s\\S]*?)<\\\\/span>\\\\n";
-//	<span id=\"priceblock_ourprice\" class=\"a-size-medium a-color-price\">$54.85<\/span>\n
+
+
+	private static String expItemPrice ="priceblock_ourprice[\\s\\S]*?>([\\s\\S]*?)<";
+	//	<span id=\"priceblock_ourprice\" class=\"a-size-medium a-color-price\">$54.85<\/span>\n
 	private static Pattern pattItemPrice = Pattern.compile(expItemPrice);
-	
-//	<span class=\"a-size-medium a-color-success\">\n        \n            Only 5 left in stock.\n            \n        \n        \n<\/span>
-private static String expItemStock ="a-size-medium a-color-success\\\\\">([\\s\\S]*?)<";
-private static Pattern pattItemStock = Pattern.compile(expItemStock);
-	
-	
-	
 
 	private Map<String,String> getColorAndSizeUrl( JSONObject jsonObject,Map<String,JSONObject> asinVariationValuesMap){
 		Map<String,String> asinAndUrl = new HashMap<String, String>();
