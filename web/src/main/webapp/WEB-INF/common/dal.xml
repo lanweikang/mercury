@@ -8,7 +8,40 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd" 
        default-autowire="byName" >
     
-    
+    <bean name="poolHttpClient" class="cn.weili.util.http.client.SimplePoolHttpClient"
+		init-method="init" destroy-method="close">
+		<property name="minConn" value="32" />
+	</bean>
+	<bean id="watchFetch" class="com.boredou.mercury.web.task.util.datafetch.WatchFetch" >
+	</bean>
+	<bean id="shoesFetch" class="com.boredou.mercury.web.task.util.datafetch.ShoesFetch" >
+		<property name="hc" ref="poolHttpClient"></property>
+	</bean>
+	<bean id="AutoSwitchFetch" class="com.boredou.mercury.web.task.util.datafetch.AutoSwitchFetch">
+		<property name="fetchMap">
+			<map>
+				<entry key="watch" value-ref="watchFetch" />
+				<entry key="shoes" value-ref="shoesFetch" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="watchDownload" class="com.boredou.mercury.web.download.WatchDownload" >
+	</bean>
+	
+	<bean id="shoesDownload" class="com.boredou.mercury.web.download.ShoesDownload" >
+	</bean>
+	
+	<bean id="AutoSwitchDownload" class="com.boredou.mercury.web.download.AutoSwitchDownload">
+		<property name="downloadMap">
+			<map>
+				<entry key="watch" value-ref="watchDownload" />
+				<entry key="shoes" value-ref="shoesDownload" />
+			</map>
+		</property>
+	</bean>
+	
+	
 
     <bean id="dataSource" class="com.jolbox.bonecp.BoneCPDataSource" destroy-method="close">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
@@ -24,7 +57,6 @@
         <property name="statementsCacheSize" value="100"/>
         <property name="releaseHelperThreads" value="3"/>
     </bean>
-    
     
     <bean id="ItemDownloadService" class="com.boredou.mercury.server.service.impl.ItemDownloadServiceImpl"></bean>
     <bean id="AmazonCategoryService" class="com.boredou.mercury.server.service.impl.AmazonCategoryServiceImpl"></bean>
