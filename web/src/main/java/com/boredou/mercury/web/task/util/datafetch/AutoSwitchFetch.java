@@ -11,9 +11,9 @@ public class AutoSwitchFetch implements FetchMethod {
 	private static Map<String, FetchMethod> fetchMap;
 	
 	@Override
-	public void fetch(AmazonCategoryDO amazonCategoryDO, String goodsUrl) {
+	public void doFetch(AmazonCategoryDO amazonCategoryDO, String goodsUrl) {
 		FetchMethod fetchMethod = fetchMap.get(amazonCategoryDO.getGoodsType());
-		fetchMethod.fetch(amazonCategoryDO, goodsUrl);
+		fetchMethod.doFetch(amazonCategoryDO, goodsUrl);
 	}
 
 }

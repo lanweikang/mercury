@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public class FileUtil {
 	
-	public static void writeToFile(String content,String filePath){
+	public static void writeToFile(String content,String filePath,boolean overWrite){
 		File file = new File(filePath);
 		if(file.exists()){
 		}else{
@@ -15,7 +15,7 @@ public class FileUtil {
 		}
 		FileOutputStream fos = null;
 		try {
-			fos = new FileOutputStream(file);
+			fos = new FileOutputStream(file,overWrite);
 			byte[] bi = content.getBytes();
 			fos.write(bi);
 		} catch (FileNotFoundException e) {

@@ -8,17 +8,20 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.citrus.service.requestcontext.buffered.BufferedRequestContext;
 import com.alibaba.citrus.turbine.dataresolver.Param;
+import com.boredou.mercury.web.download.AmazonDownload;
 
 public class Download {
 	@Autowired
     private HttpServletResponse response;
-
+	@Resource(name = "AutoSwitchDownload")
+	AmazonDownload amazonDownload;
     @Autowired
     private BufferedRequestContext brc;
 	public void doDownload(@Param("filename") String filename,@Param("goodsType") String goodsType,@Param("sex") String sex) 

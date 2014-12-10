@@ -1,5 +1,7 @@
 package com.boredou.mercury.web.task.util.datafetch;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,17 +10,18 @@ import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import cn.weili.util.StringUtil;
+import cn.weili.util.http.client.HttpClient;
+import cn.weili.util.http.client.SimpleHttpClient;
+import cn.weili.util.http.param.RequestParams;
+import cn.weili.util.http.result.ResponseResult;
+
+import com.alibaba.fastjson.JSONObject;
 import com.boredou.mercury.repository.entity.AmazonCategoryDO;
 import com.boredou.mercury.repository.entity.AmazonItemDO;
 import com.boredou.mercury.server.service.AmazonItemService;
 import com.boredou.mercury.server.service.amazon.fileUtil;
 import com.boredou.mercury.web.util.Consts;
-
-import lombok.Setter;
-import cn.weili.util.StringUtil;
-import cn.weili.util.http.client.HttpClient;
-import cn.weili.util.http.param.RequestParams;
-import cn.weili.util.http.result.ResponseResult;
 
 public class WatchFetch implements FetchMethod {
 	@Resource(name = "poolHttpClient")
@@ -29,15 +32,27 @@ public class WatchFetch implements FetchMethod {
 
 	private static int ijk=0;
 	@Override
-	public void fetch(AmazonCategoryDO amazonCategoryDO, String goodsUrl) {
+	public void doFetch(AmazonCategoryDO amazonCategoryDO, String goodsUrl) {
 		// TODO Auto-generated method stub
 		System.out.println("lwk......"+"  WatchFetch" + "  -----------------  "+goodsUrl);
 
 		String asin = goodsUrl.substring(goodsUrl.length()-10,goodsUrl.length());
 		AmazonItemDO amazonItemDOResult = new AmazonItemDO();
 		try{
-			ResponseResult result = hc.execute(RequestParams.custom().setUrl(goodsUrl).addHeader(Consts.CHEOME_USER_AGENT).build());
-			if(result == null) return ;
+//			System.out.println("SimpleHttpClient before hc:"+hc);
+			((SimpleHttpClient )hc).setConnectTimeout(90000);
+			((SimpleHttpClient )hc).setReadTimeout(90000);
+			((SimpleHttpClient )hc).setSoTimeout(90000);
+			System.out.println("Before connectTime:"+((SimpleHttpClient )hc).getConnectTimeout()+",ReadTimeout:"+((SimpleHttpClient )hc).getReadTimeout()+"," +
+					"SoTimeout"+((SimpleHttpClient )hc).getSoTimeout());
+//			System.out.println("SimpleHttpClient after hc:"+hc);
+			ResponseResult result = hc.execute(RequestParams.custom().setUrl(goodsUrl)
+					.addHeader(Consts.CHEOME_USER_AGENT)
+					.addHeader(Consts.ACCEPT)
+					.setReadTimeout( 80000L )
+					.build());
+			System.out.println("After connectTime:"+((SimpleHttpClient )hc).getConnectTimeout()+",ReadTimeout:"+((SimpleHttpClient )hc).getReadTimeout()+"," +
+					"SoTimeout"+((SimpleHttpClient )hc).getSoTimeout());
 			int code = result.getResultCode();
 			String content = StringUtil.trimNotWithNull(result.getValue());
 			amazonItemDOResult.setItemUrl(goodsUrl);
@@ -50,7 +65,6 @@ public class WatchFetch implements FetchMethod {
 			if(ijk==0){
 				System.out.println("lanweikang");
 				fileUtil.writeToFile(content, "C:/Users/Administrator/Desktop/sk/log/log.txt");
-				ijk++;
 			}
 			//			pattItemName
 			Matcher mItemName = pattItemName.matcher(content);
@@ -59,81 +73,93 @@ public class WatchFetch implements FetchMethod {
 				itemName = StringUtil.trimNotWithNull(itemName);
 				amazonItemDOResult.setName(itemName);
 				System.out.println("itemName:"+itemName);
-				break;
+//				break;
 			}
 
 			StringBuilder WholeContent = new StringBuilder();
+			JSONObject jsonObject = new JSONObject();
 
 			Matcher mItemStock = pattItemStock.matcher(content);
 			while(mItemStock.find()){
 				String itemStock = mItemStock.group(1).trim();
-				if(itemStock!=null) WholeContent.append("stock:").append(itemStock);
-				//				System.out.println("itemStock:"+itemStock);
-				break;
+//				if(itemStock!=null) WholeContent.append("stock:").append(itemStock);
+				jsonObject.put("stock", itemStock);
+//				break;
 			}
 
 			Matcher mItemPrice = pattItemPrice.matcher(content);
 			while(mItemPrice.find()){
 				String itemPrice = mItemPrice.group(1);
-				if(itemPrice!=null) WholeContent.append(",").append("price:").append(itemPrice);
-				//				System.out.println("itemPrice:"+itemPrice);
-				break;
+//				if(itemPrice!=null) WholeContent.append(",").append("price:").append(itemPrice);
+				jsonObject.put("price", itemPrice);
+//				break;
 			}
 
 			Matcher mItemSeller = pattItemSeller.matcher(content);
 			while(mItemSeller.find()){
 				String itemSeller = mItemSeller.group(1);
-				if(itemSeller!=null) WholeContent.append(",").append("seller:").append(itemSeller);
-				//				System.out.println("itemSeller:"+itemSeller);
-				break;
+//				if(itemSeller!=null) WholeContent.append(",").append("seller:").append(itemSeller);
+				jsonObject.put("seller", itemSeller);
+//				break;
 			}
 
 			//材料
 			StringBuilder materialSb = new StringBuilder();//pattItemDialWindowType
+			JSONObject materialJsonObject = new JSONObject();
 			Matcher mItemDialWindowType = pattItemDialWindowType.matcher(content);
 			while(mItemDialWindowType.find()){
 				String itemDialWindowType = mItemDialWindowType.group(1).trim();
 				if(itemDialWindowType!=null) materialSb.append("Dial window material type:").append(itemDialWindowType);
-				//				System.out.println("itemDialWindowType:"+itemDialWindowType);
-				break;
+				materialJsonObject.put("Dial window material type", itemDialWindowType);
+//				break;
 			}
 			//pattItemCaseMaterial
 			Matcher mItemCaseMaterial = pattItemCaseMaterial.matcher(content);
 			while(mItemCaseMaterial.find()){
 				String itemCaseMaterial = mItemCaseMaterial.group(1).trim();
 				if(itemCaseMaterial!=null) materialSb.append(",").append("Case Material:").append(itemCaseMaterial);
-				//				System.out.println("itemCaseMaterial:"+itemCaseMaterial);
-				break;
+				materialJsonObject.put("Case Material", itemCaseMaterial);
+//				break;
 			}
 			//pattItemBandMaterial
 			Matcher mItemBandMaterial = pattItemBandMaterial.matcher(content);
 			while(mItemBandMaterial.find()){
 				String itemBandMaterial = mItemBandMaterial.group(1).trim();
 				if(itemBandMaterial!=null) materialSb.append(",").append("Band Material:").append(itemBandMaterial);
-				//				System.out.println("itemBandMaterial:"+itemBandMaterial);
-				break;
+				materialJsonObject.put("Band Material", itemBandMaterial);
+//				break;
 			}
-
+			
 			if(StringUtils.isNotBlank(materialSb)){
-				WholeContent.append(",").append("material:").append("{").append(materialSb).append("}");
+//				WholeContent.append(",").append("material:").append("{").append(materialSb).append("}");
 				//				System.out.println("materialSb:"+materialSb);
 			}
+			
+			jsonObject.put("material", materialJsonObject);
 
 			//pattItemImgUrl
 			StringBuilder imgUrlsSb = new StringBuilder();
+			List<String> imgUrlList = new ArrayList<String>();
 			Matcher mItemImgUrl = pattItemImgUrl.matcher(content);
 			while(mItemImgUrl.find()){
 				String itemImgUrl = mItemImgUrl.group(1);
 				if(itemImgUrl!=null) imgUrlsSb.append(",").append("imgUrl:").append(itemImgUrl);
-				System.out.println("itemImgUrl:"+itemImgUrl);
+				imgUrlList.add(itemImgUrl);
 			}
-
+			jsonObject.put("imgUrl", imgUrlList);
+			
 			if(StringUtils.isNotBlank(imgUrlsSb)){
-				WholeContent.append(",").append("imgUrls:").append("{").append(imgUrlsSb).append("}");
+//				WholeContent.append(",").append("imgUrls:").append("{").append(imgUrlsSb).append("}");
 				System.out.println("imgUrlsSb:"+imgUrlsSb);
 			}
-
+			
+			WholeContent.append(jsonObject);
+			if(ijk==0){
+				System.out.println("lanweikangjsononject:"+jsonObject);
+			}
 			if(StringUtils.isNotBlank(WholeContent)) amazonItemDOResult.setWholeContent(WholeContent.toString());
+			
+			
 			//			amazonItemDOResult.setWholeContent(content);
 
 
@@ -163,7 +189,7 @@ public class WatchFetch implements FetchMethod {
 				amazonItemService.updateAmazonItemDOByAsin(amazonItemDOResult);
 			}
 		}
-
+		ijk++;
 	}
 
 	//匹配item的name

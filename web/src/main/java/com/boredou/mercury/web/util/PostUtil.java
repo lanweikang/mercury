@@ -89,40 +89,42 @@ public class PostUtil {
 //			System.out.println("key: "+key+" ,ajaxUrl: "+map.get(key));
 //		}
 		System.out.println("------------         fengexian         ---------");
+//		
+//		
+//		String ajax = "http://www.amazon.com/gp/twister/ajaxv2?sid=179-0957629-2823009&ptd=SHOES&json=1&dpxAjaxFlag=1&sCac=1&isUDPFlag=1&twisterView=glance&ee=2&pgid=shoes_display_on_website&nodeID=672123011&rid=1Q1N970T4HWGDEAA8ESE&parentAsin=B00G42NQKE&enPre=1&dStr=size_name%2Ccolor_name&auiAjax=1&storeID=shoes&psc=1&asinList=B00EK9RA46&isFlushing=2&id=B00EK9RA46&prefetchParam=0&mType=full&dpEnvironment=softlines";
+//		
+//		ResponseResult result1 = hc.execute(RequestParams.custom().setUrl(ajax).addHeader(Consts.CHEOME_USER_AGENT)
+//				.setReadTimeout(HttpClient.DEFAULT_READ_TIMEOUT).build());
+//		String ajaxString = result1.getValue();
+//		System.out.println("size: "+ajaxString.length());
+//		Matcher mItemPrice = pattItemPrice.matcher(ajaxString);
+//		while(mItemPrice.find()){
+//			System.out.println("zhaodaole...");
+//			String itemPrice = mItemPrice.group(1).trim();
+//			itemPrice = StringUtil.trimNotWithNull(itemPrice);
+//			System.out.println("itemPrice:"+itemPrice);
+//			break;
+//		}
+////		FileUtil.writeToFile(ajaxString, "C:/Users/Administrator/Desktop/df/log.txt");
+//		System.out.println("-------------------------------------------");
+//		Matcher mItemStock = pattItemStock.matcher(ajaxString);
+//		String stock ="";
+//		while(mItemStock.find()){
+//			System.out.println("zhaodaole...");
+//			String itemStock = mItemStock.group(1).trim();
+//			itemStock = StringUtil.trimNotWithNull(itemStock);
+//			System.out.println("itemStock:"+itemStock);
+//			stock = itemStock;
+//			break;
+//		}
+//		
+//		String str = stock.replaceAll("\\\\n", "");
+//		System.out.println("str: "+str);
+//		
+//		
+//		System.out.println("end...");
 		
 		
-		String ajax = "http://www.amazon.com/gp/twister/ajaxv2?sid=179-0957629-2823009&ptd=SHOES&json=1&dpxAjaxFlag=1&sCac=1&isUDPFlag=1&twisterView=glance&ee=2&pgid=shoes_display_on_website&nodeID=672123011&rid=1Q1N970T4HWGDEAA8ESE&parentAsin=B00G42NQKE&enPre=1&dStr=size_name%2Ccolor_name&auiAjax=1&storeID=shoes&psc=1&asinList=B00EK9RA46&isFlushing=2&id=B00EK9RA46&prefetchParam=0&mType=full&dpEnvironment=softlines";
-		
-		ResponseResult result1 = hc.execute(RequestParams.custom().setUrl(ajax).addHeader(Consts.CHEOME_USER_AGENT)
-				.setReadTimeout(HttpClient.DEFAULT_READ_TIMEOUT).build());
-		String ajaxString = result1.getValue();
-		System.out.println("size: "+ajaxString.length());
-		Matcher mItemPrice = pattItemPrice.matcher(ajaxString);
-		while(mItemPrice.find()){
-			System.out.println("zhaodaole...");
-			String itemPrice = mItemPrice.group(1).trim();
-			itemPrice = StringUtil.trimNotWithNull(itemPrice);
-			System.out.println("itemPrice:"+itemPrice);
-			break;
-		}
-//		FileUtil.writeToFile(ajaxString, "C:/Users/Administrator/Desktop/df/log.txt");
-		System.out.println("-------------------------------------------");
-		Matcher mItemStock = pattItemStock.matcher(ajaxString);
-		String stock ="";
-		while(mItemStock.find()){
-			System.out.println("zhaodaole...");
-			String itemStock = mItemStock.group(1).trim();
-			itemStock = StringUtil.trimNotWithNull(itemStock);
-			System.out.println("itemStock:"+itemStock);
-			stock = itemStock;
-			break;
-		}
-		
-		String str = stock.replaceAll("\\\\n", "");
-		System.out.println("str: "+str);
-		
-		
-		System.out.println("end...");
 	}
 	
 	

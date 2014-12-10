@@ -11,15 +11,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cn.weili.util.http.client.HttpClient;
+import cn.weili.util.http.client.SimplePoolHttpClient;
 import cn.weili.util.http.param.RequestParams;
 import cn.weili.util.http.result.ResponseResult;
 
 import com.boredou.mercury.repository.entity.AmazonCategoryDO;
 import com.boredou.mercury.web.task.util.datafetch.FetchMethod;
+import com.boredou.mercury.web.util.Consts;
 
 public class FetchItemUtil {
 	@Setter
 	private static HttpClient hc;
+	static{
+		if(hc==null)
+			hc=SimplePoolHttpClient.newHttpClient();
+	}
 	private final static Logger logger = LoggerFactory.getLogger(FetchItemUtil.class);
 //	@Setter
 //	private static Map<String,FetchMethod> goodsTypeMap;
@@ -33,7 +39,10 @@ public class FetchItemUtil {
 
 	public static List<String> getItemList(String pageUrl){
 		List<String> myItemList = new ArrayList<String>();
-		ResponseResult result = hc.execute(RequestParams.custom().setUrl(pageUrl).build());
+		ResponseResult result = hc.execute(RequestParams.custom().setUrl(pageUrl)
+				.addHeader(Consts.CHEOME_USER_AGENT)
+				.setReadTimeout( 5000000L )
+				.build());
 
 		String rexp = result.getValue();
 
@@ -52,7 +61,7 @@ public class FetchItemUtil {
 	}
 	public static void getItem(AmazonCategoryDO amazonCategoryDO,String goodsUrl){
 		
-		fetchMethod.fetch(amazonCategoryDO, goodsUrl);
+		fetchMethod.doFetch(amazonCategoryDO, goodsUrl);
 		
 		
 	}

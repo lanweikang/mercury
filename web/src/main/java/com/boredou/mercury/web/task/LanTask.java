@@ -37,7 +37,7 @@ public class LanTask  {
 	AmazonItemInfoService amazonItemInfoService;
 	@Setter
 	private HttpClient hc;
-	private static ExecutorService executor = Executors.newFixedThreadPool(10);
+	private static ExecutorService executor = Executors.newFixedThreadPool(5);
 	private final static Logger logger = LoggerFactory.getLogger(FetchPageUtil.class);
 
 	public void start(){
@@ -49,11 +49,11 @@ public class LanTask  {
 
 		List<AmazonCategoryDO> amazonCategoryList = amazonCategoryService.getAmazonCategoryList(amazonCategoryDOPara);
 		List<String> pageList = new ArrayList<String>();
-		List<String> itemList = new ArrayList<String>();
+		List<String> perPageItemList ;
 		
 		for (AmazonCategoryDO amazonCategoryDO : amazonCategoryList) {
 			
-			if(amazonCategoryDO.getId()<=2) continue;
+			if(amazonCategoryDO.getId()>2) continue;
 			
 //			if(!GoodsType.getInstanceMap().containsKey(amazonCategoryDO.getGoodsType()))
 //				logger.warn("goodstype doesn't contains "+amazonCategoryDO.getGoodsType());
@@ -71,18 +71,21 @@ public class LanTask  {
 			}
 			
 			for (String pageUrl : pageList) {
-				itemList = FetchItemUtil.getItemList(pageUrl);
-				System.out.println("item:  "+itemList.get(0));
-				for (String goodsUrl : itemList) {
+				if(i++>0) return ;
+				
+				perPageItemList = FetchItemUtil.getItemList(pageUrl);
+				System.out.println("pageUrl"+pageUrl+" ,itemNum:  "+perPageItemList.size());
+				for (String goodsUrl : perPageItemList) {
 //					单线程方法
-//					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
+					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
 //					线程池方法
-					executor.submit(new FetchItem(amazonCategoryDO, goodsUrl));
+//					executor.submit(new FetchItem(amazonCategoryDO, goodsUrl));
 				}
 			}
 		}
 
 	}
+	static int i=0,j=0,k=0;
 	@AllArgsConstructor
 	private class FetchItem implements Runnable{
 		private AmazonCategoryDO amazonCategoryDO;
