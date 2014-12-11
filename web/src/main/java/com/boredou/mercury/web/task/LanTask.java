@@ -53,7 +53,7 @@ public class LanTask  {
 		
 		for (AmazonCategoryDO amazonCategoryDO : amazonCategoryList) {
 			
-			if(amazonCategoryDO.getId()>2) continue;
+//			if(amazonCategoryDO.getId()>2) continue;
 			
 //			if(!GoodsType.getInstanceMap().containsKey(amazonCategoryDO.getGoodsType()))
 //				logger.warn("goodstype doesn't contains "+amazonCategoryDO.getGoodsType());
@@ -64,23 +64,27 @@ public class LanTask  {
 			
 			
 			pageList = FetchPageUtil.getPageList(amazonCategoryDO.getSearchUrl());
+			System.out.println("-----"+amazonCategoryDO.getName()+"------------总页数："+pageList.size()+"---------------");
 			
-			logger.warn("page total: "+pageList.size());
-			for (String string : pageList) {
-				System.out.println(string);
-			}
+			
 			
 			for (String pageUrl : pageList) {
-				if(i++>0) return ;
+//				if(i++>0) return ;
+				
+				System.out.println("pageUrl:********* "+pageUrl);
+//				executor.submit(new FetchPage(amazonCategoryDO, pageUrl));
 				
 				perPageItemList = FetchItemUtil.getItemList(pageUrl);
-				System.out.println("pageUrl"+pageUrl+" ,itemNum:  "+perPageItemList.size());
+				System.out.println("itemNum:---  "+perPageItemList.size());
+//				System.out.println("pageUrl"+pageUrl+" ,itemNum:  "+perPageItemList.size());
 				for (String goodsUrl : perPageItemList) {
 //					单线程方法
-//					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
+					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
 //					线程池方法
-					executor.submit(new FetchItem(amazonCategoryDO, goodsUrl));
+//					executor.submit(new FetchItem(amazonCategoryDO, goodsUrl));
 				}
+				
+				
 			}
 		}
 
@@ -94,6 +98,22 @@ public class LanTask  {
 		public void run() {
 			System.out.println("新线程执行...");
 			FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
+		}
+	}
+	
+	@AllArgsConstructor
+	private class FetchPage implements Runnable{
+		private AmazonCategoryDO amazonCategoryDO;
+		String pageUrl;
+		@Override
+		public void run() {
+			List<String> perPageItemList = FetchItemUtil.getItemList(pageUrl);
+			for (String goodsUrl : perPageItemList) {
+//				单线程方法
+				FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
+//				线程池方法
+//				executor.submit(new FetchItem(amazonCategoryDO, goodsUrl));
+			}
 		}
 		
 	}

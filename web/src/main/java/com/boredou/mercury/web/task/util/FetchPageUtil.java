@@ -45,19 +45,16 @@ public class FetchPageUtil {
 	 * >2</a></span>
 	 * <span class="pagnRA"
 	 */
-	private static String expPageTotal = ">([\\d]+)[</a>]*</span>\\s*<span class=\"pagnRA\"";
+	private static String expPageTotal = ">([\\d]+)(?:</a>)?</span>\\s*<span class=\"pagnRA\"";
 	private static Pattern pattPageTotal = Pattern.compile(expPageTotal);
 
 	public static List<String> getPageList(String goodsUrl){
-		System.out.println("httpclient:"+hc);
 
 		List<String> myPageList = new ArrayList<String>();
 		String searchUrl = goodsUrl;
-		System.out.println("FetchPageUtil---connectTime:"+((SimpleHttpClient )hc).getConnectTimeout()+",ReadTimeout:"+((SimpleHttpClient )hc).getReadTimeout()+"," +
-				"SoTimeout"+((SimpleHttpClient )hc).getSoTimeout());
 		ResponseResult result = hc.execute(RequestParams.custom().setUrl(searchUrl)
 				.addHeader(Consts.CHEOME_USER_AGENT)
-				.setReadTimeout( 50000L )
+				.setReadTimeout( 90000L )
 				.build());
 
 //		if(result==null) return null;
@@ -71,17 +68,14 @@ public class FetchPageUtil {
 		//找到总页数
 		while(mPageTotle.find()){
 			pageTotle = Integer.parseInt(mPageTotle.group(1));
-
-			logger.debug("共找到："+pageTotle+"页码");
 			break;
 		}
 		//找到某一个
 		while(mPageLink.find()){
 			pageLink = mPageLink.group(1);
-			logger.debug("pageLink:"+pageLink);
 			break;
 		}
-		if(pageLink=="") return null;
+//		if(pageLink=="") return myPageList;
 		for(int i=1;i<=pageTotle;i++){
 //			String s = pageLink.replaceAll("ref=sr_pg_\\d*", "ref=sr_pg_"+i).replaceAll("page=\\d*", "page="+i);
 //			pageLink

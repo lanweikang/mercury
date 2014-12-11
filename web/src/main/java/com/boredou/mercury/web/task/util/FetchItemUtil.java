@@ -41,7 +41,7 @@ public class FetchItemUtil {
 		List<String> myItemList = new ArrayList<String>();
 		ResponseResult result = hc.execute(RequestParams.custom().setUrl(pageUrl)
 				.addHeader(Consts.CHEOME_USER_AGENT)
-				.setReadTimeout( 5000000L )
+				.setReadTimeout( 90000L )
 				.build());
 
 		String rexp = result.getValue();
