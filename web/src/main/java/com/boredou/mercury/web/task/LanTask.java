@@ -77,9 +77,9 @@ public class LanTask  {
 				System.out.println("pageUrl"+pageUrl+" ,itemNum:  "+perPageItemList.size());
 				for (String goodsUrl : perPageItemList) {
 //					单线程方法
-					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
+//					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
 //					线程池方法
-//					executor.submit(new FetchItem(amazonCategoryDO, goodsUrl));
+					executor.submit(new FetchItem(amazonCategoryDO, goodsUrl));
 				}
 			}
 		}

@@ -49,7 +49,7 @@ public class WatchFetch implements FetchMethod {
 			ResponseResult result = hc.execute(RequestParams.custom().setUrl(goodsUrl)
 					.addHeader(Consts.CHEOME_USER_AGENT)
 					.addHeader(Consts.ACCEPT)
-					.setReadTimeout( 80000L )
+					.setReadTimeout( 90000L )
 					.build());
 			System.out.println("After connectTime:"+((SimpleHttpClient )hc).getConnectTimeout()+",ReadTimeout:"+((SimpleHttpClient )hc).getReadTimeout()+"," +
 					"SoTimeout"+((SimpleHttpClient )hc).getSoTimeout());
