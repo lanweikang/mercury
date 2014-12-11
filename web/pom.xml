@@ -99,6 +99,7 @@
 				<!-- ================================================= -->
 				<configuration>
 					<userProperties>src/main/antx/antx.properties</userProperties>
+					<!-- <userProperties>src/main/antx/antx.properties.online</userProperties> -->
 					<exploding>true</exploding>
 					<explodedDirectory>
 						${warExplodedDirectory}
