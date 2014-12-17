@@ -1,5 +1,9 @@
 package com.boredou.mercury.web.apps.module.screen.download;
 
+import static com.alibaba.citrus.util.ObjectUtil.defaultIfNull;
+import static com.alibaba.citrus.util.StringEscapeUtil.escapeURL;
+import static org.apache.commons.lang.StringUtils.trimToNull;
+
 import java.io.PrintWriter;
 import java.util.Date;
 
@@ -8,11 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.citrus.service.requestcontext.buffered.BufferedRequestContext;
-import com.alibaba.citrus.turbine.Context;
 import com.alibaba.citrus.turbine.dataresolver.Param;
-import static org.apache.commons.lang.StringUtils.trimToNull;
-import static com.alibaba.citrus.util.ObjectUtil.defaultIfNull;
-import static com.alibaba.citrus.util.StringEscapeUtil.escapeURL;
 public class ItemDownload {
 	@Autowired
     private HttpServletResponse response;
@@ -36,6 +36,7 @@ public class ItemDownload {
         response.setContentType("application/csv");
 
         PrintWriter out = response.getWriter();
+//        ServletOutputStream out =  response.getOutputStream();
         
         StringBuilder sb = new StringBuilder();
         sb.append("lan,").append("wei,").append("kang").append("\n");

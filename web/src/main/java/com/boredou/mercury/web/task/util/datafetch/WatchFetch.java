@@ -60,6 +60,7 @@ public class WatchFetch implements FetchMethod {
 //				System.out.println("lanweikang");
 //				fileUtil.writeToFile(content, "C:/Users/Administrator/Desktop/sk/log/log.txt");
 //			}
+			
 			//			pattItemName
 			Matcher mItemName = pattItemName.matcher(content);
 			while(mItemName.find()){
@@ -71,6 +72,16 @@ public class WatchFetch implements FetchMethod {
 
 			StringBuilder WholeContent = new StringBuilder();
 			JSONObject jsonObject = new JSONObject();
+			
+//			pattItemModelNum
+			Matcher mItemModelNum = pattItemModelNum.matcher(content);
+			while(mItemModelNum.find()){
+				String itemModelNum = mItemModelNum.group(1).trim();
+				itemModelNum = StringUtil.trimNotWithNull(itemModelNum);
+				System.out.println("------itemModelNum: "+itemModelNum);
+				jsonObject.put("ModelNum", itemModelNum);
+				break;
+			}
 
 			Matcher mItemStock = pattItemStock.matcher(content);
 			while(mItemStock.find()){
@@ -198,5 +209,10 @@ public class WatchFetch implements FetchMethod {
 	//large img url 
 	private static String expItemImgUrl ="\"large\":\"([\\s\\S]+?)\",\"main\"";
 	private static Pattern pattItemImgUrl = Pattern.compile(expItemImgUrl);
+	
+//	Model number[\s\S]*?</th>[\s\S]*?<td class="a-span7 a-size-base">([\s\S]*?)</td>
+//	Model number
+	private static String expItemModelNum ="Model number[\\s\\S]*?</th>[\\s\\S]*?<td class=\"a-span7 a-size-base\">([\\s\\S]*?)</td>";
+	private static Pattern pattItemModelNum = Pattern.compile(expItemModelNum);
 
 }

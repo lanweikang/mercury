@@ -78,6 +78,11 @@ public class LanTask  {
 				System.out.println("itemNum:---  "+perPageItemList.size());
 //				System.out.println("pageUrl"+pageUrl+" ,itemNum:  "+perPageItemList.size());
 				for (String goodsUrl : perPageItemList) {
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 //					单线程方法
 					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
 //					线程池方法

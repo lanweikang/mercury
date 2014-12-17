@@ -14,8 +14,13 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 public class PostTest {
-
+	private static int count=0;
 	public static void main(String[] args) {
+		for (int i = 0; i < 200; i++) {
+			main();
+		}
+	}
+	public static void main() {
 		HttpClient hc = new HttpClient();
 		String yizhifuUrl = "https://b.bestpay.com.cn/bppf/login.do";
 		String imgUrl = "https://b.bestpay.com.cn/bppf/vimage.do";
@@ -64,7 +69,7 @@ public class PostTest {
 			InputStream in = method1.getResponseBodyAsStream();
 			
 //			C:\Users\Administrator\Desktop\log
-			File file =new File("C:/Users/Administrator/Desktop/log/yzm.jpeg");
+			File file =new File("C:/Users/Administrator/Desktop/yzm/"+ count++ +".jpeg");
 			OutputStream os = null;
 			int len = -1;
 			os = new FileOutputStream(file);

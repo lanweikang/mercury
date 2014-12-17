@@ -28,7 +28,7 @@ public class JDBCTest {
 		try {
 			Connection con = DriverManager.getConnection(url, user, password);
 			Statement stmt = con.createStatement();
-			String sql = "select * from item_bak where name is not null limit 1";
+			String sql = "select * from amazon_item where name is not null limit 1";
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next()){
 				content = rs.getString("whole_content");
