@@ -63,7 +63,7 @@ public class ExportExcel<T> {
         // 生成一个样式
         HSSFCellStyle style = workbook.createCellStyle();
         // 设置这些样式
-        style.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
+//        style.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
         style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
         style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
@@ -79,7 +79,7 @@ public class ExportExcel<T> {
         style.setFont(font);
         // 生成并设置另一个样式
         HSSFCellStyle style2 = workbook.createCellStyle();
-        style2.setFillForegroundColor(HSSFColor.LIGHT_YELLOW.index);
+//        style2.setFillForegroundColor(HSSFColor.LIGHT_YELLOW.index);
         style2.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         style2.setBorderBottom(HSSFCellStyle.BORDER_THIN);
         style2.setBorderLeft(HSSFCellStyle.BORDER_THIN);
@@ -93,15 +93,15 @@ public class ExportExcel<T> {
         // 把字体应用到当前的样式
         style2.setFont(font2);
 
-        // 声明一个画图的顶级管理器
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
-        // 定义注释的大小和位置,详见文档
-        HSSFComment comment = patriarch.createComment(new HSSFClientAnchor(0,
-                0, 0, 0, (short) 4, 2, (short) 6, 5));
-        // 设置注释内容
-        comment.setString(new HSSFRichTextString("可以在POI中添加注释！"));
-        // 设置注释作者，当鼠标移动到单元格上是可以在状态栏中看到该内容.
-        comment.setAuthor("leno");
+//        // 声明一个画图的顶级管理器
+//        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+//        // 定义注释的大小和位置,详见文档
+//        HSSFComment comment = patriarch.createComment(new HSSFClientAnchor(0,
+//                0, 0, 0, (short) 4, 2, (short) 6, 5));
+//        // 设置注释内容
+//        comment.setString(new HSSFRichTextString("可以在POI中添加注释！"));
+//        // 设置注释作者，当鼠标移动到单元格上是可以在状态栏中看到该内容.
+//        comment.setAuthor("leno");
 
         // 产生表格标题行
         HSSFRow row = sheet.createRow(0);
@@ -173,8 +173,8 @@ public class ExportExcel<T> {
                         HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0,
                                 1023, 255, (short) 6, index, (short) 6, index);
                         anchor.setAnchorType(2);
-                        patriarch.createPicture(anchor, workbook.addPicture(
-                                bsValue, HSSFWorkbook.PICTURE_TYPE_JPEG));
+//                        patriarch.createPicture(anchor, workbook.addPicture(
+//                                bsValue, HSSFWorkbook.PICTURE_TYPE_JPEG));
                     } else {
                         // 其它数据类型都当作字符串简单处理
                         textValue = value.toString();
@@ -190,7 +190,7 @@ public class ExportExcel<T> {
                             HSSFRichTextString richString = new HSSFRichTextString(
                                     textValue);
                             HSSFFont font3 = workbook.createFont();
-                            font3.setColor(HSSFColor.BLUE.index);
+//                            font3.setColor(HSSFColor.BLUE.index);
                             richString.applyFont(font3);
                             cell.setCellValue(richString);
                         }

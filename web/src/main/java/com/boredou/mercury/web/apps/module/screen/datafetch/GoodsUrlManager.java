@@ -6,6 +6,7 @@ import static org.apache.commons.lang.StringUtils.trimToNull;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,8 @@ import com.alibaba.citrus.turbine.Context;
 import com.alibaba.citrus.turbine.dataresolver.Param;
 import com.boredou.mercury.repository.entity.ItemDO;
 import com.boredou.mercury.server.service.ItemDownloadService;
+import com.boredou.mercury.web.download.test.ExportExcel;
+import com.boredou.mercury.web.download.test.Student;
 
 public class GoodsUrlManager {
 	private static String ss = "【レビューで送料無料】【靴 シューズ 】【ファッション ブランド】【靴 シューズ サンダル】【革 レザー】<BR>";
@@ -43,7 +46,7 @@ public class GoodsUrlManager {
 		System.out.println(category); 
 		String filename = defaultIfNull(trimToNull(category), "product") + System.currentTimeMillis() +".csv";
 //		filename = "\"" + escapeURL(filename) + "\"";
-		filename = "蓝伟康.csv";
+		filename = category+"-"+System.currentTimeMillis()+".xls";
 		response.setHeader("Content-disposition", "attachment; filename=" + new String(filename.getBytes("utf-8"),"iso-8859-1"));
 		response.setContentType("application/vnd.ms-excel; charset=utf-8");
 		
@@ -60,11 +63,20 @@ public class GoodsUrlManager {
 //	            out.print(sb.toString());
 //
 //	        }
-	        PrintWriter out = response.getWriter();
+//	        PrintWriter out = response.getWriter();
 //	        ServletOutputStream out = response.getOutputStream();
-	        out.print(sb.toString());
+//	        out.print(sb.toString());
+//	        out.flush(); // 立即提示用户下载
+	        
+	        ServletOutputStream out = response.getOutputStream();
+	        ExportExcel<Student> ex = new ExportExcel<Student>();
+	        String[] headers = { "学号", "姓名", "年龄", "性别", "出生日期" };
+	        List<Student> dataset = new ArrayList<Student>();
+	        dataset.add(new Student(10000001, "张三", 20, true, new Date()));
+	        dataset.add(new Student(20000002, "【レビューで送料無料】", 24, false, new Date()));
+	        dataset.add(new Student(30000003, "王五", 22, true, new Date()));
+	        ex.exportExcel(headers, dataset, out);
 	        out.flush(); // 立即提示用户下载
-		
 	}
 }
 
