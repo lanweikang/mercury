@@ -1,0 +1,20 @@
+手表的数据格式：
+{
+    "BrandSellerorCollectionName": "Marc by Marc Jacobs",
+    "ModelNum": "MBM1246",
+    "asin": "B009V0KUT6",
+    "imgUrls": [
+        "http://ecx.images-amazon.com/images/I/414qZH0icCL.jpg",
+        "http://ecx.images-amazon.com/images/I/51GqEffR1oL.jpg",
+        "http://ecx.images-amazon.com/images/I/41CCh-SyhGL.jpg"
+    ],
+    "material": {
+        "Band Color": "Black",
+        "Band Material": "leather",
+        "Case Material": "Gold Ion-plated Stainless Steel",
+        "Dial window material type": "Scratch Resistant Mineral"
+    },
+    "price": "$128.48",
+    "seller": "Barveni",
+    "stock": "Only 3 left in stock."
+}
