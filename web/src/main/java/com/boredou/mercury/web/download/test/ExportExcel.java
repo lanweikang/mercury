@@ -28,7 +28,7 @@ public class ExportExcel<T> {
 
     public void exportExcel(String[] headers, Collection<T> dataset,
             OutputStream out) {
-        exportExcel("测试POI导出EXCEL文档", headers, dataset, out, "yyyy-MM-dd");
+        exportExcel("测试POI导出EXCEL文档", headers==null?new String[]{}:headers, dataset, out, "yyyy-MM-dd");
     }
 
     public void exportExcel(String[] headers, Collection<T> dataset,
@@ -64,29 +64,29 @@ public class ExportExcel<T> {
         HSSFCellStyle style = workbook.createCellStyle();
         // 设置这些样式
 //        style.setFillForegroundColor(HSSFColor.SKY_BLUE.index);
-        style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-        style.setBorderRight(HSSFCellStyle.BORDER_THIN);
-        style.setBorderTop(HSSFCellStyle.BORDER_THIN);
-        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+//        style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+//        style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+//        style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+//        style.setBorderRight(HSSFCellStyle.BORDER_THIN);
+//        style.setBorderTop(HSSFCellStyle.BORDER_THIN);
+//        style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
         // 生成一个字体
         HSSFFont font = workbook.createFont();
         font.setColor(HSSFColor.VIOLET.index);
         font.setFontHeightInPoints((short) 12);
-        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+//        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
         // 把字体应用到当前的样式
         style.setFont(font);
         // 生成并设置另一个样式
         HSSFCellStyle style2 = workbook.createCellStyle();
 //        style2.setFillForegroundColor(HSSFColor.LIGHT_YELLOW.index);
-        style2.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        style2.setBorderBottom(HSSFCellStyle.BORDER_THIN);
-        style2.setBorderLeft(HSSFCellStyle.BORDER_THIN);
-        style2.setBorderRight(HSSFCellStyle.BORDER_THIN);
-        style2.setBorderTop(HSSFCellStyle.BORDER_THIN);
-        style2.setAlignment(HSSFCellStyle.ALIGN_CENTER);
-        style2.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
+//        style2.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+//        style2.setBorderBottom(HSSFCellStyle.BORDER_THIN);
+//        style2.setBorderLeft(HSSFCellStyle.BORDER_THIN);
+//        style2.setBorderRight(HSSFCellStyle.BORDER_THIN);
+//        style2.setBorderTop(HSSFCellStyle.BORDER_THIN);
+//        style2.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+//        style2.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
         // 生成另一个字体
         HSSFFont font2 = workbook.createFont();
         font2.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL);
@@ -115,6 +115,7 @@ public class ExportExcel<T> {
         // 遍历集合数据，产生数据行
         Iterator<T> it = dataset.iterator();
         int index = 0;
+        if(headers.length==0)index = -1;
         while (it.hasNext()) {
             index++;
             row = sheet.createRow(index);
@@ -123,7 +124,7 @@ public class ExportExcel<T> {
             Field[] fields = t.getClass().getDeclaredFields();
             for (short i = 0; i < fields.length; i++) {
                 HSSFCell cell = row.createCell(i);
-                cell.setCellStyle(style2);
+//                cell.setCellStyle(style2);
                 Field field = fields[i];
                 String fieldName = field.getName();
                 String getMethodName = "get"
@@ -191,24 +192,19 @@ public class ExportExcel<T> {
                                     textValue);
                             HSSFFont font3 = workbook.createFont();
 //                            font3.setColor(HSSFColor.BLUE.index);
-                            richString.applyFont(font3);
+//                            richString.applyFont(font3);
                             cell.setCellValue(richString);
                         }
                     }
                 } catch (SecurityException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (NoSuchMethodException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (IllegalArgumentException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } catch (InvocationTargetException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 } finally {
                     // 清理资源
@@ -219,7 +215,6 @@ public class ExportExcel<T> {
         try {
             workbook.write(out);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -228,7 +223,8 @@ public class ExportExcel<T> {
     public static void main(String[] args) {
         // 测试学生
         ExportExcel<Student> ex = new ExportExcel<Student>();
-        String[] headers = { "学号", "姓名", "年龄", "性别", "出生日期" };
+//        String[] headers = { "学号", "姓名", "年龄", "性别", "出生日期" };
+        String[] headers = { };
         List<Student> dataset = new ArrayList<Student>();
         dataset.add(new Student(10000001, "张三", 20, true, new Date()));
         dataset.add(new Student(20000002, "李四", 24, false, new Date()));
@@ -256,12 +252,12 @@ public class ExportExcel<T> {
             dataset2.add(new Book(5, "c#入门", "leno", 300.33f, "1234567",
                     "汤春秀出版社", buf));
 
-            OutputStream out = new FileOutputStream("E://a.xls");
-            OutputStream out2 = new FileOutputStream("E://b.xls");
-            ex.exportExcel(headers, dataset, out);
+            OutputStream out = new FileOutputStream("C:\\Users\\Administrator\\Desktop//a.xls");
+            OutputStream out2 = new FileOutputStream("C:\\Users\\Administrator\\Desktop//b.xls");
+            ex.exportExcel(null, dataset, out);
             ex2.exportExcel(headers2, dataset2, out2);
             out.close();
-            JOptionPane.showMessageDialog(null, "导出成功!");
+//            JOptionPane.showMessageDialog(null, "导出成功!");
             System.out.println("excel导出成功！");
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block

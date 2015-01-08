@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,7 +54,7 @@ public class LanTask  {
 		
 		for (AmazonCategoryDO amazonCategoryDO : amazonCategoryList) {
 			
-//			if(amazonCategoryDO.getId()>2) continue;
+			if(amazonCategoryDO.getId()>2) continue;
 			
 //			if(!GoodsType.getInstanceMap().containsKey(amazonCategoryDO.getGoodsType()))
 //				logger.warn("goodstype doesn't contains "+amazonCategoryDO.getGoodsType());
@@ -79,14 +80,14 @@ public class LanTask  {
 //				System.out.println("pageUrl"+pageUrl+" ,itemNum:  "+perPageItemList.size());
 				for (String goodsUrl : perPageItemList) {
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(1000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 //					单线程方法
-					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
+//					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
 //					线程池方法
-//					executor.submit(new FetchItem(amazonCategoryDO, goodsUrl));
+					executor.submit(new FetchItem(amazonCategoryDO, goodsUrl));
 				}
 				
 				

@@ -17,6 +17,8 @@ public class Download {
 		PrintWriter out = response.getWriter();
 		out.write("I'm lanweikang");
 		out.flush();
-		
+	}
+	public static void main(String[] args){
+		System.out.println("lwk...");
 	}
 }
