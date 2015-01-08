@@ -6,7 +6,7 @@ $(document).ready(function(){
 		var s = $("#category").val();
 		var link = $("#download").attr("href");
 		alert(s+" lanweikang "+link);
-		$("#download").attr("href",$("#download").attr("href")+"?category="+s);
+		$("#download").attr("href",$("#dd").attr("href")+"?category="+s);
 	});
 });
 </script>
@@ -19,5 +19,6 @@ $(document).ready(function(){
 <option value="女士鞋子(cole haan)" >女士鞋子(cole haan)</option>
 </select>
 #set($url = "$appsLink.setTarget('datafetch/goodsUrlManager/download.do')")
+<a id="dd" type="hidden" href="$url"></a>
 <a id="download" href="$url">${url}下载</a>
-<p id="myid">lanwk</p>
+
