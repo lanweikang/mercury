@@ -17,22 +17,15 @@ public class WatchDO {
 	private String e_colH ;
 	public WatchDO(String modelNum,String asin,String bandColor){
 		System.out.println("--- "+modelNum+asin+bandColor);
-		this.e_colA = String.format(WatchHelp.getColA(), asin,bandColor.substring(0, 3));
-		System.out.println("e_colA...complete");
-		this.e_colB = String.format(WatchHelp.getColB(), asin,bandColor.substring(0, 3));
-		System.out.println("e_colB...complete");
+		String bandColorSub = bandColor.substring(0, bandColor.length()>=3?3:bandColor.length());
+		this.e_colA = String.format(WatchHelp.getColA(),asin, bandColorSub);
+		this.e_colB = String.format(WatchHelp.getColB(),asin, bandColorSub);
 		this.e_colC = WatchHelp.getColC();
-		System.out.println("e_colC...complete");
 		this.e_colD = WatchHelp.getColD(); 
-		System.out.println("e_colD...complete");
 		this.e_colE = String.format(WatchHelp.getColE(), modelNum,modelNum,bandColor);
-		System.out.println("e_colE...complete");
 		this.e_colF = String.format(WatchHelp.getColF(), modelNum,bandColor);
-		System.out.println("e_colF...complete");
 		this.e_colG = String.format(WatchHelp.getColG(), modelNum,bandColor);
-		System.out.println("e_colG...complete");
 		this.e_colH = String.format(WatchHelp.getColH(), modelNum,bandColor);
-		System.out.println("e_colH...complete");
 		
 	}
 //	private
