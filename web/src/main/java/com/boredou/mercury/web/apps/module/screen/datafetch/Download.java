@@ -12,12 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.citrus.turbine.Context;
 import com.boredou.mercury.server.service.ItemDownloadService;
 
-public class Test {
+public class Download {
 	@Autowired
 	private ItemDownloadService itemDownloadService;
 	
 	public void doPerform(Context context) {
 		System.out.println("start...");
+		
 		System.out.println("end...");
 	}
 	public static void main(String[] args){
