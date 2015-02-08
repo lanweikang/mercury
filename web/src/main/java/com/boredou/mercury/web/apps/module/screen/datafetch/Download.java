@@ -10,15 +10,18 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.citrus.turbine.Context;
+import com.boredou.mercury.server.service.AmazonCategoryService;
 import com.boredou.mercury.server.service.ItemDownloadService;
 
 public class Download {
 	@Autowired
 	private ItemDownloadService itemDownloadService;
+	@Autowired
+	private AmazonCategoryService amazonCategoryService;
 	
 	public void doPerform(Context context) {
 		System.out.println("start...");
-		
+//		amazonCategoryService.getAmazonCategoryList(amazonCategoryDO)
 		System.out.println("end...");
 	}
 	public static void main(String[] args){

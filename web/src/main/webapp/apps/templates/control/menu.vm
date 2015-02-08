@@ -21,14 +21,13 @@
             	  text:'amazon数据管理',
   	          items:[
   	          	{id:'main-goodsUrl',text:'商品url管理',href:'/datafetch/goodsUrlManager.htm'},
-  	          	{id:'main-dz-log',text:'pageList管理',href:'/datafetch/test.htm'},
-  	            {id:'main-dz-z',text:'item管理',href:'/dz/checkAccount.htm'},
+  	          	{id:'main-dz-log',text:'pageList管理',href:'/datafetch/download.htm'}
   	          ]
               } ,
               {
                   text:'下载',
                   items:[
-                    {id:'main-download',text:'产品下载',href:'/download/item_download.htm'}
+                    {id:'main-down',text:'产品下载',href:'/download/item_download.htm'}
                   ]
               	}
             ]

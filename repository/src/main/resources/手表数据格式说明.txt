@@ -18,3 +18,4 @@
     "seller": "Barveni",
     "stock": "Only 3 left in stock."
 }
+

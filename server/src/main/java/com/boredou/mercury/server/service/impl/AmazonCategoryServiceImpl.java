@@ -14,26 +14,24 @@ public class AmazonCategoryServiceImpl implements AmazonCategoryService {
 	private AmazonCategoryDAO amazonCategoryDAO;
 	@Override
 	public void addAmazonCategoryDO(AmazonCategoryDO amazonCategoryDO) {
-		// TODO Auto-generated method stub
 		amazonCategoryDAO.addAmazonCategoryDO(amazonCategoryDO);
 	}
 
 	@Override
 	public void delAmazonCategoryDOById(int id) {
-		// TODO Auto-generated method stub
 		amazonCategoryDAO.delAmazonCategoryDOById(id);
 	}
 
 	@Override
 	public List<AmazonCategoryDO> getAmazonCategoryList(
 			AmazonCategoryDO amazonCategoryDO) {
-		// TODO Auto-generated method stub
-		return amazonCategoryDAO.getAmazonCategoryList(amazonCategoryDO);
+		int totalCount = amazonCategoryDAO.getAmazonCategoryListCount(amazonCategoryDO);
+		amazonCategoryDO.setTotalCount(totalCount);
+		return amazonCategoryDAO.getAmazonCategoryList(amazonCategoryDO,amazonCategoryDO.getRowBounds());
 	}
 
 	@Override
 	public void updateAmazonCategoryDO(AmazonCategoryDO amazonCategoryDO) {
-		// TODO Auto-generated method stub
 		amazonCategoryDAO.updateAmazonCategoryDO(amazonCategoryDO);
 	}
 

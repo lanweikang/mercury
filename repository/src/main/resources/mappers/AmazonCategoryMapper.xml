@@ -32,6 +32,9 @@
 		select <include refid="allCol"/> 
 		from amazon_category 
 		<where>
+			<if test="name != null and name !='' ">
+				 and name like CONCAT('%',#{name},'%')
+			</if>
 			<if test="goodsType != null and goodsType !='' ">
 				and goods_type = #{goodsType}
 			</if>
@@ -43,6 +46,24 @@
 			</if>
 		</where>
 	</select>
+	
+	<select id="getAmazonCategoryListCount" parameterType="AmazonCategoryDO" resultType="int">
+		select count(id) 
+		from amazon_category 
+		<where>
+			<if test="goodsType != null and goodsType !='' ">
+				and goods_type = #{goodsType}
+			</if>
+			<if test="sex != null and sex !='' ">
+				and sex = #{sex}
+			</if>
+			<if test="display != null and display !='' ">
+				and display = #{display}
+			</if>
+		</where>
+	</select>
+	
+	
 	
 	<update id="delAmazonCategoryDOById" parameterType="int">
 		update amazon_category

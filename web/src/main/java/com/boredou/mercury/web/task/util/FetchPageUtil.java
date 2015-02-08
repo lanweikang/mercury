@@ -84,6 +84,9 @@ public class FetchPageUtil {
 			String pageUrl = "http://www.amazon.com"+s;
 			myPageList.add(pageUrl);
 		}
+		if(myPageList.size()==0)
+			myPageList.add(goodsUrl) ;
+			
 		return myPageList;
 	}
 	

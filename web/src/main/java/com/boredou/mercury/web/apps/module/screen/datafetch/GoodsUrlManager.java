@@ -6,7 +6,9 @@ import static org.apache.commons.lang.StringUtils.trimToNull;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -17,26 +19,30 @@ import com.alibaba.citrus.service.requestcontext.buffered.BufferedRequestContext
 import com.alibaba.citrus.turbine.Context;
 import com.alibaba.citrus.turbine.dataresolver.Param;
 import com.alibaba.fastjson.JSONObject;
+import com.boredou.mercury.repository.entity.AmazonCategoryDO;
 import com.boredou.mercury.repository.entity.ItemDO;
 import com.boredou.mercury.repository.entity.download.WatchDO;
+import com.boredou.mercury.server.service.AmazonCategoryService;
 import com.boredou.mercury.server.service.ItemDownloadService;
+import com.boredou.mercury.web.base.AbstractController;
 import com.boredou.mercury.web.download.test.ExportExcel;
+import com.boredou.mercury.web.write.JsonHttpWrite;
 
-public class GoodsUrlManager {
+public class GoodsUrlManager  extends AbstractController  {
 	private static String ss = "【レビューで送料無料】【靴 シューズ 】【ファッション ブランド】【靴 シューズ サンダル】【革 レザー】<BR>";
-	@Autowired
-	private HttpServletResponse response;
 	@Autowired
 	private BufferedRequestContext brc;
 	@Autowired
 	private ItemDownloadService itemDownloadService;
+	@Autowired
+	private AmazonCategoryService amazonCategoryService;
 	private static final String SHEET_ACCOUNT = "amazon_item";
 	private static final int DEFAULT_MAX_SIZ = 100;
 	public void doPerform(Context context) {
 		context.put("cList","cList");
 	}
 
-	public void doDownload(@Param("category") String category) 
+	public void doDownload(@Param("category") String category,HttpServletResponse response) 
 			throws IOException, InterruptedException{
 		System.out.println("lwk..."+new Date());
 		response.setCharacterEncoding("utf-8");
@@ -89,8 +95,24 @@ public class GoodsUrlManager {
 //		ex.exportExcel(headers, dataset, out);
 //		out.flush(); // 立即提示用户下载
 	}
+	
+	public void doSearch(Context context,HttpServletResponse response,
+			@Param("pageIndex") int pageIndex,@Param("start") int start, @Param("limit") int limit,
+			@Param("name") String name
+			) {
+		System.out.println("lwk..."+getParametersMap());
+		AmazonCategoryDO AmazonCategoryParam = new AmazonCategoryDO();
+		AmazonCategoryParam.setPP(pageIndex);
+		AmazonCategoryParam.setPageSize(limit);
+		AmazonCategoryParam.setName(name);
+		List<AmazonCategoryDO> resultList = amazonCategoryService.getAmazonCategoryList(AmazonCategoryParam);
+			
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("rows", resultList);
+		map.put("results", AmazonCategoryParam.getTotalCount() );
+		JsonHttpWrite jsonHttpWrite = new JsonHttpWrite(response, map);
+		jsonHttpWrite.write();
+	}
+	
 }
 
-
-
-//application/vnd.ms-excel; charset=utf-8

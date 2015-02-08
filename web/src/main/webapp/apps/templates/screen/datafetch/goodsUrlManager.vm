@@ -1,24 +1,137 @@
-<head>
-<script type="text/javascript" src="/assets/js/jquery-1.8.1.min.js"></script>
+<style>
+.hide {
+    display: none;
+}
+</style>
+<div class="container">
+	<form id="searchForm" class="form-horizontal">
+      <div class="row">
+      	
+      	<div class="control-group span8">
+	      	<label class="control-label">名称：</label>
+	      	<div class="controls">
+            	<input id="name" type="text" class="control-text" name="name">
+          	</div>
+	     </div>
+	     
+      	
+        </div>
+       <div class="row">   
+        <div class="span3 offset2">
+          <button type="button" id="btnSearch" class="button button-primary">搜索</button>
+        </div>
+      </div>
+    </form>
+    <div class="search-grid-container">
+	  <div id="grid"></div>
+	</div>
+</div>
+$control.setTemplate("commonjs.vm")
+<script type="text/javascript" src="../assets/js/sea.js"></script>
 <script type="text/javascript">
-$(document).ready(function(){
-	$("#download").click(function(){
-		var s = $("#category").val();
-		var link = $("#download").attr("href");
-		alert(s+" lanweikang "+link);
-		$("#download").attr("href",$("#dd").attr("href")+"?category="+s);
+	BUI.use(['common/search','common/page'],function (Search) {
+		columns = [
+			{title:'编号',dataIndex:'id',width:40},
+			{title:'名称',dataIndex:'name',width:80},
+			{title:'url',dataIndex:'searchUrl',width:250},
+			{title:'类别',dataIndex:'goodsType',width:80},
+			{title:'状态',dataIndex:'searchStatus',width:80},
+			{title:'新建时间',dataIndex:'gmtCreated',width:130,renderer:BUI.Grid.Format.datetimeRenderer},
+			{title:'修改时间',dataIndex:'gmtModified',width:130,renderer:BUI.Grid.Format.datetimeRenderer},
+			{title:'操作',dataIndex:'id',width:80,renderer : function(value){
+				delStr = '<span class="grid-command btn-del" title="删除文章">删除</span>';
+				return delStr;
+			}}
+			
+		],
+		store = Search.createStore('/datafetch/GoodsUrlManager/search.do'),
+		editing = new BUI.Grid.Plugins.CellEditing({
+			triggerSelected : false
+		}),
+		
+		gridCfg = Search.createGridCfg(columns,{
+			tbar : {
+				items:[
+				{text : '<i class="icon-plus"></i>添加',btnCls : 'button button-small btn-add',handler : addFunction}
+				#if($!user.role.roleCode == "administrator")
+            		,{text : '<i class="icon-remove"></i>删除',btnCls : 'button button-small',handler : delFunction}
+            	#end
+				]
+			},
+		plugins : [BUI.Grid.Plugins.CheckSelection,BUI.Grid.Plugins.AutoFit,editing] // 插件形式引入多选表格
+		});
+		 var  search = new Search({
+        store : store,
+        gridCfg : gridCfg,
+        render : '#grid'
+      }),
+      grid = search.get('grid');
+      
+    function delFunction(){
+      var selections = grid.getSelection();
+      delItems(selections);
+    }
+    
+    
+    function delItems(items){
+      var ids = [];
+      BUI.each(items,function(item){
+        ids.push(item.id);
+      });
+ 
+      if(ids.length){
+        BUI.Message.Confirm('确认要删除选中的记录么？',function(){
+          $.ajax({
+            url : '/article/articleList/logicDel.do',
+            dataType : 'json',
+            data : {'ids' : ids.toString()},
+            success : function(data){
+              if(data.success){ //删除成功
+              	BUI.Message.Alert('删除成功！');
+                search.load();
+              }else{ //删除失败
+                BUI.Message.Alert('删除失败！');
+              }
+            },
+            error:function (XMLHttpRequest,textStatus){
+				if(XMLHttpRequest.status==200 && textStatus == "parsererror"){
+					 alert("对不起，您无此操作权限");
+				}
+		 	}
+        });
+        },'question');
+      }
+    }  
+    
+    
+    // 添加操作
+    function addFunction(){
+      top.topManager.openPage({
+   	 	href : 'article/articleDetail.htm',
+    	title : 'new article'
+  	});
+  	}
+    
+    
+    
+     //监听事件，删除一条记录
+    grid.on('cellclick',function(ev){
+      var sender = $(ev.domTarget); //点击的Dom
+      if(sender.hasClass('btn-pass')){
+        var record = ev.record;
+        passItems([record]);
+      }else if(sender.hasClass("btn-notpass")){
+        var record = ev.record;
+        notpassItems([record]);
+      }else if(sender.hasClass('btn-del')){
+        var record = ev.record;
+        delItems([record]);
+      }
+    });
+    
+    
+      
 	});
-});
 </script>
-</head>
-<br>
-<select id="category">
-<option value="男士手表" >男士手表</option>
-<option value="女士手表" >女士手表</option>
-<option value="女士鞋子(Dansko)" >女士鞋子(Dansko)</option>
-<option value="女士鞋子(cole haan)" >女士鞋子(cole haan)</option>
-</select>
-#set($url = "$appsLink.setTarget('datafetch/goodsUrlManager/download.do')")
-<a id="dd" type="hidden" href="$url"></a>
-<a id="download" href="$url">${url}下载</a>
+
 
