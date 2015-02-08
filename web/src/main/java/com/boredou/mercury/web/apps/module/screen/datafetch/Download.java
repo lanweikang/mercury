@@ -2,6 +2,7 @@ package com.boredou.mercury.web.apps.module.screen.datafetch;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -10,10 +11,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.citrus.turbine.Context;
+import com.alibaba.fastjson.JSONObject;
+import com.boredou.mercury.repository.entity.AmazonCategoryDO;
 import com.boredou.mercury.server.service.AmazonCategoryService;
 import com.boredou.mercury.server.service.ItemDownloadService;
+import com.boredou.mercury.web.base.AbstractController;
+import com.boredou.mercury.web.write.JsonHttpWrite;
 
-public class Download {
+public class Download  extends AbstractController{
 	@Autowired
 	private ItemDownloadService itemDownloadService;
 	@Autowired
@@ -21,9 +26,20 @@ public class Download {
 	
 	public void doPerform(Context context) {
 		System.out.println("start...");
-//		amazonCategoryService.getAmazonCategoryList(amazonCategoryDO)
+		List<AmazonCategoryDO> categoryList = amazonCategoryService.getAmazonCategoryAll();
+		context.put("categoryList", categoryList);
 		System.out.println("end...");
 	}
+	
+	public void doDownload(){
+		System.out.println("lwk..."+getParametersMap());
+		JSONObject obj = new JSONObject();
+		obj.put("success",true);
+		JsonHttpWrite jsonHttpWrite = new JsonHttpWrite(response,obj);
+		jsonHttpWrite.write();
+	}
+	
+	
 	public static void main(String[] args){
 		 try {
 

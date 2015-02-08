@@ -1,1 +1,66 @@
-$test
+<style type="text/css">
+        .hide{display:none;}
+</style>
+ <div id="content" class="container">
+    <form id="J_Form" class="form-horizontal">  
+		<div class="row">
+            <div class="control-group span8">
+                <label class="control-label">种类</label>
+                <div class="controls">
+                	<select name="categoryId" id="categoryId">
+						#foreach($obj in $!categoryList)
+						<option value="$obj.id">${obj.name}-${obj.goodsType}</option>	
+						#end                		
+                		
+	                </select>
+                </div>
+            </div>
+        </div>
+    <div class="row">
+    	<label class="control-label"></label>
+    </div>
+ 	<div class="row">
+        </div>
+        <div class="span3 offset2">
+       		<input type="hidden" id="id" name="id" value="$!departmentDO.id">
+          <button  type="button" id="editBtn" class="button button-primary">下载</button>
+        </div>
+    </form>
+</div>
+
+
+<script type="text/javascript" src="/assets/js/jquery-1.8.1.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		
+		$("#editBtn").click(function(){
+		
+			
+			$.ajax({
+			    url:'/datafetch/download/download.do',
+			    type:'post',
+			    dataType:'json',
+			    cache:false,
+			    async:false,
+			    data:{
+			        "categoryId" : $("#categoryId").val(),
+			     },
+			         success:function(data){
+			            if(data.success){
+			                alert("成功");
+			            }else{
+			                alert(data.error);
+			            }
+			                return false;
+			            },
+			          error:function (XMLHttpRequest,textStatus){
+						if(XMLHttpRequest.status==200 && textStatus == "parsererror"){
+					    	alert("对不起，您无此操作权限");
+						}
+					 }
+		      });
+			
+					
+		});
+	});
+</script>

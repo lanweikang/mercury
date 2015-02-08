@@ -18,5 +18,7 @@ public interface AmazonCategoryDAO extends SqlMapper{
 	int getAmazonCategoryListCount(AmazonCategoryDO amazonCategoryDO);
 	//更改
 	void updateAmazonCategoryDO(AmazonCategoryDO amazonCategoryDO);
+//	取得所有
+	public List<AmazonCategoryDO> getAmazonCategoryAll();
 	
 }

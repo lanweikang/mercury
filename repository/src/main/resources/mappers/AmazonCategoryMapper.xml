@@ -20,7 +20,7 @@
 	</resultMap>
 	
 	<sql id="allCol" >
-		id,gmt_created,gmt_modified,name,search_url,goods_type,sex,display,last_http_code
+		id,gmt_created,gmt_modified,name,search_url,goods_type,sex,display,last_http_code,search_status
 	</sql>
 	
 	<insert id="addAmazonCategoryDO" parameterType="AmazonCategoryDO">
@@ -88,11 +88,33 @@
 			<if test="lastHttpCode != null and lastHttpCode !='' ">
 				last_http_code = #{lastHttpCode},
 			</if>
+			<if test="searchStatus != null and searchStatus !='' ">
+				search_status = #{searchStatus},
+			</if>
 			gmt_modified = now()
 		</set>
 		<where>
 			id=#{id}
 		</where>
 	</update>
+	
+	<select id="getAmazonCategoryAll"  resultMap="AmazonCategoryResultMap">
+		select <include refid="allCol"/> 
+		from amazon_category 
+		<where>
+			<if test="name != null and name !='' ">
+				 and name like CONCAT('%',#{name},'%')
+			</if>
+			<if test="goodsType != null and goodsType !='' ">
+				and goods_type = #{goodsType}
+			</if>
+			<if test="sex != null and sex !='' ">
+				and sex = #{sex}
+			</if>
+			<if test="display != null and display !='' ">
+				and display = #{display}
+			</if>
+		</where>
+	</select>
 	
 </mapper> 

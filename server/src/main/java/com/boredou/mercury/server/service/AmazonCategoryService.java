@@ -16,4 +16,6 @@ public interface AmazonCategoryService {
 	public List<AmazonCategoryDO> getAmazonCategoryList(AmazonCategoryDO amazonCategoryDO);
 	//更改
 	public void updateAmazonCategoryDO(AmazonCategoryDO amazonCategoryDO);
+	//取得所有
+	public List<AmazonCategoryDO> getAmazonCategoryAll();
 }

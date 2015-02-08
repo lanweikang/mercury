@@ -35,6 +35,7 @@ $control.setTemplate("commonjs.vm")
 			{title:'名称',dataIndex:'name',width:80},
 			{title:'url',dataIndex:'searchUrl',width:250},
 			{title:'类别',dataIndex:'goodsType',width:80},
+			{title:'性别',dataIndex:'sex',width:80},
 			{title:'状态',dataIndex:'searchStatus',width:80},
 			{title:'新建时间',dataIndex:'gmtCreated',width:130,renderer:BUI.Grid.Format.datetimeRenderer},
 			{title:'修改时间',dataIndex:'gmtModified',width:130,renderer:BUI.Grid.Format.datetimeRenderer},

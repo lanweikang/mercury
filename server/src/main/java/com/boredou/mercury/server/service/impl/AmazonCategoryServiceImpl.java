@@ -35,4 +35,9 @@ public class AmazonCategoryServiceImpl implements AmazonCategoryService {
 		amazonCategoryDAO.updateAmazonCategoryDO(amazonCategoryDO);
 	}
 
+	@Override
+	public List<AmazonCategoryDO> getAmazonCategoryAll() {
+		return amazonCategoryDAO.getAmazonCategoryAll();
+	}
+
 }
