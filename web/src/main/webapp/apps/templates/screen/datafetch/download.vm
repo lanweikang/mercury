@@ -27,40 +27,20 @@
         </div>
     </form>
 </div>
-
+<a href="" id="xiazai" >xiazai</a>
 
 <script type="text/javascript" src="/assets/js/jquery-1.8.1.min.js"></script>
 <script type="text/javascript">
 	$(function(){
 		
 		$("#editBtn").click(function(){
+			$('#xiazai').attr("href",'/download/item_download.htm?categoryId='+$('#categoryId').val());
+			$('#xiazai').click();
+		});
 		
-			
-			$.ajax({
-			    url:'/datafetch/download/download.do',
-			    type:'post',
-			    dataType:'json',
-			    cache:false,
-			    async:false,
-			    data:{
-			        "categoryId" : $("#categoryId").val(),
-			     },
-			         success:function(data){
-			            if(data.success){
-			                alert("成功");
-			            }else{
-			                alert(data.error);
-			            }
-			                return false;
-			            },
-			          error:function (XMLHttpRequest,textStatus){
-						if(XMLHttpRequest.status==200 && textStatus == "parsererror"){
-					    	alert("对不起，您无此操作权限");
-						}
-					 }
-		      });
-			
-					
+		$("#xiazai").click(function(){
+			$(this).attr("href",'/download/item_download.htm?categoryId='+$('#categoryId').val());
+			//return false;
 		});
 	});
 </script>

@@ -21,7 +21,7 @@
             	  text:'amazon数据管理',
   	          items:[
   	          	{id:'main-goodsUrl',text:'商品url管理',href:'/datafetch/goodsUrlManager.htm'},
-  	          	{id:'main-dz-log',text:'pageList管理',href:'/datafetch/download.htm'}
+  	          	{id:'main-dz-log',text:'下载管理',href:'/datafetch/download.htm'}
   	          ]
               } ,
               {
