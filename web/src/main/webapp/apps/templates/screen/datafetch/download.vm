@@ -23,24 +23,16 @@
         </div>
         <div class="span3 offset2">
        		<input type="hidden" id="id" name="id" value="$!departmentDO.id">
-          <button  type="button" id="editBtn" class="button button-primary">下载</button>
+          <a href="#" id="xiazai" class="button button-primary" >下载</a>
         </div>
     </form>
 </div>
-<a href="" id="xiazai" >xiazai</a>
 
 <script type="text/javascript" src="/assets/js/jquery-1.8.1.min.js"></script>
 <script type="text/javascript">
 	$(function(){
-		
-		$("#editBtn").click(function(){
-			$('#xiazai').attr("href",'/download/item_download.htm?categoryId='+$('#categoryId').val());
-			$('#xiazai').click();
-		});
-		
 		$("#xiazai").click(function(){
 			$(this).attr("href",'/download/item_download.htm?categoryId='+$('#categoryId').val());
-			//return false;
 		});
 	});
 </script>
