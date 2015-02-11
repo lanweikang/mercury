@@ -32,7 +32,7 @@
 <script type="text/javascript">
 	$(function(){
 		$("#xiazai").click(function(){
-			$(this).attr("href",'/download/item_download.htm?categoryId='+$('#categoryId').val());
+			$(this).attr("href",'/download/itemDownload/download.do?categoryId='+$('#categoryId').val());
 		});
 	});
 </script>
