@@ -21,6 +21,10 @@
 	</properties>
 
 	<dependencies>
+	    <dependency>
+    			<groupId>org.apache.commons</groupId>
+    			<artifactId>commons-csv</artifactId>
+    	</dependency>		
 		<dependency>
 			<groupId>${parent.groupId}</groupId>
 			<artifactId>mercury-server</artifactId>
