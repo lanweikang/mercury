@@ -10,6 +10,7 @@
         <property name="mercury.logging.charset" defaultValue="UTF-8"  description="日志编码"/>
         <property name="mercury.logging.level" defaultValue="INFO"  description="日志级别"/>
         <property name="mercury.logging.root" defaultValue="${mercury.root.path}/logs"  description="日志路径"/>
+        <property name="mercury.pic.path" defaultValue="/assets/img/amazonImg"  description="抓取图片存放路径"/>
         
         <property name="mercury.mysql.url" defaultValue="jdbc:mysql://localhost/refund_record"  description="数据库连接"/>
         <property name="mercury.mysql.user" defaultValue="root"  description="数据库用户名"/>

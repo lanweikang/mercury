@@ -8,5 +8,5 @@ import com.boredou.mercury.repository.entity.ItemDO;
 
 @Service
 public interface ItemDownloadService {
-	List<ItemDO> getItemList(String category);
+	List<ItemDO> getItemListById(long categoryId);
 }

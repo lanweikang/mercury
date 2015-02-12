@@ -117,4 +117,12 @@
 		</where>
 	</select>
 	
+	<select id="loadById" parameterType="long" resultMap="AmazonCategoryResultMap">
+		select <include refid="allCol"/> 
+		from amazon_category 
+		<where>
+			id=#{id}
+		</where>
+	</select>
+	
 </mapper> 

@@ -40,4 +40,9 @@ public class AmazonCategoryServiceImpl implements AmazonCategoryService {
 		return amazonCategoryDAO.getAmazonCategoryAll();
 	}
 
+	@Override
+	public AmazonCategoryDO loadById(long categoryId) {
+		return amazonCategoryDAO.loadById(categoryId);
+	}
+	
 }

@@ -13,7 +13,7 @@ public class ItemDownloadServiceImpl implements ItemDownloadService {
 	private ItemDAO itemDAO;
 
 	@Override
-	public List<ItemDO> getItemList(String category) {
-		return itemDAO.getItemList(category);
+	public List<ItemDO> getItemListById(long categoryId) {
+		return itemDAO.getItemListById(categoryId);
 	}
 }

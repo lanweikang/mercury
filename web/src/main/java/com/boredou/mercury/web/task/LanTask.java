@@ -26,22 +26,27 @@ import com.boredou.mercury.server.service.AmazonItemService;
 import com.boredou.mercury.server.service.AmazonPageService;
 import com.boredou.mercury.web.task.util.FetchItemUtil;
 import com.boredou.mercury.web.task.util.FetchPageUtil;
+import com.boredou.mercury.web.util.UriUtil;
 @Data
 public class LanTask  {
 	@Autowired
-	AmazonCategoryService amazonCategoryService;
+	private AmazonCategoryService amazonCategoryService;
 	@Autowired
-	AmazonPageService amazonPageService; 
+	private AmazonPageService amazonPageService; 
 	@Autowired
-	AmazonItemService amazonItemService;
+	private AmazonItemService amazonItemService;
 	@Autowired
-	AmazonItemInfoService amazonItemInfoService;
+	private AmazonItemInfoService amazonItemInfoService;
 	@Setter
 	private HttpClient hc;
+	@Autowired
+	private UriUtil uriUtil;
 	private static ExecutorService executor = Executors.newFixedThreadPool(5);
 	private final static Logger logger = LoggerFactory.getLogger(FetchPageUtil.class);
 
 	public void start(){
+		
+		System.out.println(uriUtil.getAmazonPicPath());
 		//		1.获取四个 商品类别url
 		//		2.对四个商品类别url 进行循环，得到 页面url
 		//		3.对 页面url 进行循环，得到 商品url

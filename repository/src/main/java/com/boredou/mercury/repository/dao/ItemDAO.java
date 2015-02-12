@@ -6,5 +6,5 @@ import com.boredou.mercury.repository.base.SqlMapper;
 import com.boredou.mercury.repository.entity.ItemDO;
 
 public interface ItemDAO extends SqlMapper {
-	List<ItemDO> getItemList(String category);
+	List<ItemDO> getItemListById(long categoryId);
 }

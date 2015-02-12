@@ -85,7 +85,7 @@ public class ItemDownload {
 	public void doDownload(@Param("categoryId") String categoryId,HttpServletResponse response) 
 			throws IOException, InterruptedException{
 		System.out.println("lwk..."+new Date());
-		AmazonCategoryDO cate = amazonCategoryService.loadById(Integer.valueOf(categoryId));
+		AmazonCategoryDO cate = amazonCategoryService.loadById(Long.valueOf(categoryId));
 		response.setCharacterEncoding("utf-8");
 
 		//		System.out.println("out-- "+out);

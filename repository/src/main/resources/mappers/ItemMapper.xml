@@ -12,9 +12,9 @@
 		<result property="category" column="category" />
 	</resultMap>
 
-	<select id="getItemList" parameterType="String" resultMap="category">
+	<select id="getItemListById" parameterType="long" resultMap="category">
 		select a.id , a.name , a.item_url , a.whole_content , b.name as category from amazon_item as a left join amazon_category as b on a.belongto_category_id=b.id
-		where b.name = #{categoryname} ;
+		where b.id = #{categoryId} ;
 	</select>
 	
 </mapper> 

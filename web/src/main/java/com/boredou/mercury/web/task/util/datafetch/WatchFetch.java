@@ -24,11 +24,13 @@ import com.boredou.mercury.server.service.AmazonItemService;
 import com.boredou.mercury.server.service.amazon.fileUtil;
 import com.boredou.mercury.web.task.util.datafetch.expression.WatchHelp;
 import com.boredou.mercury.web.util.Consts;
+import com.boredou.mercury.web.util.UriUtil;
 
 public class WatchFetch implements FetchMethod {
 	@Resource(name = "poolHttpClient")
 	private HttpClient hc;
-
+	@Autowired
+	private UriUtil uriUtil;
 	@Autowired
 	AmazonItemService amazonItemService;
 
@@ -91,6 +93,8 @@ public class WatchFetch implements FetchMethod {
 
 
 			List<String> imgUrlList = WatchHelp.getImgUrls(content);
+			
+			
 
 			jsonObject.put("imgUrls", imgUrlList);
 			

@@ -18,4 +18,6 @@ public interface AmazonCategoryService {
 	public void updateAmazonCategoryDO(AmazonCategoryDO amazonCategoryDO);
 	//取得所有
 	public List<AmazonCategoryDO> getAmazonCategoryAll();
+	
+	AmazonCategoryDO loadById(long categoryId);
 }
