@@ -96,7 +96,7 @@ public class ItemDownload {
 		System.out.println(categoryId); 
 		String filename = defaultIfNull(trimToNull(categoryId), "product") + System.currentTimeMillis() +".csv";
 		//		filename = "\"" + escapeURL(filename) + "\"";
-		filename = categoryId+"-"+System.currentTimeMillis()+".xls";
+		filename = categoryId+"-"+System.currentTimeMillis()+".csv";
 		response.setHeader("Content-disposition", "attachment; filename=" + new String(filename.getBytes("utf-8"),"iso-8859-1"));
 		response.setContentType("application/vnd.ms-excel; charset=utf-8");
 
@@ -111,7 +111,7 @@ public class ItemDownload {
 		if(cate.getGoodsType().equals("watch")){
 			getWatchData(need,dataset);
 		}else if(cate.getGoodsType().equals("shoes")){
-			shoesDownload();
+			getShoesData(need,dataset);
 		}
 		
 		
@@ -143,7 +143,13 @@ public class ItemDownload {
 		
 	}
 	
-	private void shoesDownload(){
+	private void getShoesData(final List<ItemDO> need,List<Object> dataset ){
+		for (ItemDO itemDO : need) {
+			JSONObject jo = JSONObject.parseObject(itemDO.getAttrs());
+			System.out.println(itemDO.getAttrs());
+			System.out.println("------");
+			
+		}
 		
 	}
 	
