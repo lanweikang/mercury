@@ -13,6 +13,10 @@ import java.util.List;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import jxl.demo.CSV;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.citrus.service.requestcontext.buffered.BufferedRequestContext;
@@ -99,17 +103,29 @@ public class ItemDownload {
 		List<ItemDO> list = itemDownloadService.getItemListById(Integer.valueOf(categoryId));
 		StringBuilder sb = new StringBuilder();
 		System.out.println("..."+list.size());
-
+		
+		List<Object> dataset = new ArrayList<Object>();
+		
+		
 		List<ItemDO> need = list.subList(0, 5);
 		if(cate.getGoodsType().equals("watch")){
-			watchDownload(need, response);
+			getWatchData(need,dataset);
 		}else if(cate.getGoodsType().equals("shoes")){
 			shoesDownload();
 		}
+		
+		
+		ServletOutputStream out = response.getOutputStream();
+		ExportExcel<Object> ex = new ExportExcel<Object>();
+		
+		ex.exportExcel(null, dataset, out);
+		out.flush(); // 立即提示用户下载
+		
+		
 	}
 	
-	private void watchDownload(List<ItemDO> need,HttpServletResponse response) throws IOException{
-		List<Object> dataset = new ArrayList<Object>();
+	private void getWatchData(final List<ItemDO> need,List<Object> dataset ) throws IOException{
+		
 		for (ItemDO itemDO : need) {
 			JSONObject jo = JSONObject.parseObject(itemDO.getAttrs());
 			System.out.println(itemDO.getAttrs());
@@ -124,14 +140,44 @@ public class ItemDownload {
 			dataset.add(w);
 		}
 		
-		ServletOutputStream out = response.getOutputStream();
-		ExportExcel<Object> ex = new ExportExcel<Object>();
 		
-		ex.exportExcel(null, dataset, out);
-		out.flush(); // 立即提示用户下载
 	}
 	
 	private void shoesDownload(){
+		
+	}
+	
+	public void doDownloadTest(@Param("categoryId") String categoryId,HttpServletResponse response) 
+			throws IOException, InterruptedException{
+		System.out.println("lwk..."+new Date());
+		AmazonCategoryDO cate = amazonCategoryService.loadById(Long.valueOf(categoryId));
+		response.setCharacterEncoding("utf-8");
+
+		//		System.out.println("out-- "+out);
+		System.out.println(categoryId); 
+		String filename = defaultIfNull(trimToNull(categoryId), "product") + System.currentTimeMillis() +".csv";
+		//		filename = "\"" + escapeURL(filename) + "\"";
+		filename = categoryId+"-"+System.currentTimeMillis()+".csv";
+		response.setHeader("Content-disposition", "attachment; filename=" + new String(filename.getBytes("utf-8"),"iso-8859-1"));
+		response.setContentType("application/csv; charset=utf-8");
+
+		List<ItemDO> list = itemDownloadService.getItemListById(Integer.valueOf(categoryId));
+		StringBuilder sb = new StringBuilder();
+		System.out.println("..."+list.size());
+
+		List<ItemDO> need = list.subList(0, 5);
+		
+		
+		response.getOutputStream();
+		PrintWriter out = response.getWriter();
+		
+		CSVFormat csvFmt = CSVFormat.DEFAULT;
+		
+//		CSVPrinter csvPrter = new CSV
+		
+		out.flush();
+		out.close();
+		
 		
 	}
 	
