@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
 
+import org.apache.shiro.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,14 +55,14 @@ public class LanTask  {
 		AmazonCategoryDO amazonCategoryDOPara = new AmazonCategoryDO();
 
 		List<AmazonCategoryDO> amazonCategoryList = amazonCategoryService.getAmazonCategoryList(amazonCategoryDOPara);
-		List<String> pageList = new ArrayList<String>();
+		List<String> pageList = null ;
 		List<String> perPageItemList ;
 		
 		for (AmazonCategoryDO amazonCategoryDO : amazonCategoryList) {
 			amazonCategoryDO.setSearchStatus(SearchStatus.searching);
 			amazonCategoryService.updateAmazonCategoryDO(amazonCategoryDO);
 			
-			if(amazonCategoryDO.getId()>2){
+			if(amazonCategoryDO.getId()<=2){
 				amazonCategoryDO.setSearchStatus(SearchStatus.complete);
 				amazonCategoryService.updateAmazonCategoryDO(amazonCategoryDO);
 				continue;
@@ -73,7 +74,18 @@ public class LanTask  {
 			if(!GoodsType.getInstanceList().contains(amazonCategoryDO.getGoodsType()))
 				logger.warn("goodstype doesn't contains "+amazonCategoryDO.getGoodsType());
 			
-			pageList = FetchPageUtil.getPageList(amazonCategoryDO.getSearchUrl());
+			int retryMax = 5;
+			int re = 0;
+			while(pageList==null && re++ < retryMax  ){
+				System.out.println("re..."+re);
+				pageList = FetchPageUtil.getPageList(amazonCategoryDO.getSearchUrl());
+			}
+			
+			if(CollectionUtils.isEmpty(pageList)){
+				System.out.println("没找到..."+amazonCategoryDO.getSearchUrl());
+				continue;
+			}
+			
 			System.out.println("-----"+amazonCategoryDO.getName()+"------------总页数："+pageList.size()+"---------------");
 			
 			
@@ -87,7 +99,7 @@ public class LanTask  {
 				perPageItemList = FetchItemUtil.getItemList(pageUrl);
 				System.out.println("itemNum:---  "+perPageItemList.size());
 //				System.out.println("pageUrl"+pageUrl+" ,itemNum:  "+perPageItemList.size());
-				CountDownLatch perPageLatch = new CountDownLatch(perPageItemList.size());
+//				CountDownLatch perPageLatch = new CountDownLatch(perPageItemList.size());
 				for (String goodsUrl : perPageItemList) {
 //					try {
 //						Thread.sleep(1000);
@@ -95,16 +107,16 @@ public class LanTask  {
 //						e.printStackTrace();
 //					}
 //					单线程方法
-//					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
+					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
 //					线程池方法
-					executor.submit(new FetchItem(amazonCategoryDO, goodsUrl,perPageLatch));
+//					executor.submit(new FetchItem(amazonCategoryDO, goodsUrl,perPageLatch));
 					
 				}
-				try {
-					perPageLatch.await(30,TimeUnit.SECONDS);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+//				try {
+//					perPageLatch.await(30,TimeUnit.SECONDS);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
 			}
 			amazonCategoryDO.setSearchStatus(SearchStatus.complete);
 			amazonCategoryService.updateAmazonCategoryDO(amazonCategoryDO);

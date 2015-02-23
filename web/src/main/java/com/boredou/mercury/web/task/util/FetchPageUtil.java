@@ -49,7 +49,7 @@ public class FetchPageUtil {
 	private static Pattern pattPageTotal = Pattern.compile(expPageTotal);
 
 	public static List<String> getPageList(String goodsUrl){
-
+		
 		List<String> myPageList = new ArrayList<String>();
 		String searchUrl = goodsUrl;
 		ResponseResult result = hc.execute(RequestParams.custom().setUrl(searchUrl)

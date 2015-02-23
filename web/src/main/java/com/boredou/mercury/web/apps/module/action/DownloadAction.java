@@ -12,8 +12,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import cn.weili.util.http.client.HttpClient;
+import cn.weili.util.http.client.SimplePoolHttpClient;
+import cn.weili.util.http.param.RequestParams;
+import cn.weili.util.http.result.ResponseResult;
+
 import com.alibaba.citrus.service.requestcontext.buffered.BufferedRequestContext;
 import com.alibaba.citrus.turbine.dataresolver.Param;
+import com.boredou.mercury.server.service.amazon.fileUtil;
+import com.boredou.mercury.web.util.Consts;
+import com.boredou.mercury.web.write.FileUtil;
 
 public class DownloadAction {
 	@Autowired
@@ -27,21 +35,31 @@ public class DownloadAction {
 		filename = "\"" + escapeURL(filename) + "\"";
 		response.setHeader("Content-disposition", "attachment; filename=" + filename);
 		response.setContentType("csv/plain");
-
 	        PrintWriter out = response.getWriter();
-
 	        for (int i = 0; i < 10; i++) {
 	            out.flush(); // 立即提示用户下载
-
 	            for (int j = 0; j < 10; j++) {
 	                out.print(i);
 	                if(j==9) continue;
 	                out.print(",");
 	            }
-	            
 	            out.println();
-
 	        }
+	}
+	
+	public static void main(String[] args) throws Exception{
+		HttpClient hc = SimplePoolHttpClient.newHttpClient();
+//		String goodsUrl ="http://www.amazon.com/dp/B00DUDS0LU";
+		String goodsUrl ="http://www.amazon.com/dp/B00M8OO7A0";
 		
+		String filePath = "C:\\Users\\Administrator\\Desktop\\logs\\log.txt";
+		ResponseResult result = hc.execute(RequestParams.custom().setUrl(goodsUrl)
+				.addHeader(Consts.CHEOME_USER_AGENT)
+				.setReadTimeout( 50000L ).build());
+		int code = result.getResultCode();
+		String resp = result.getValue();
+		FileUtil.writeToFile(resp, filePath, true);
+		System.out.println("lwk..."+code);
+		hc.close();
 	}
 }
