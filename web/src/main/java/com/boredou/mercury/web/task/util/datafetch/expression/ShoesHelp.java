@@ -12,6 +12,15 @@ import com.boredou.mercury.web.write.FileUtil;
 import cn.weili.util.StringUtil;
 
 public class ShoesHelp {
+	
+	public static String getParentAsin(String content){
+		Matcher mItemParentAsin = pattItemParentAsin.matcher(content);
+		while(mItemParentAsin.find()){
+			return StringUtil.trimNotWithNull(mItemParentAsin.group(1));
+		}
+		return StringUtils.EMPTY;
+	}
+	
 	public static String getItemName(String content){
 		Matcher mItemName = pattItemName.matcher(content);
 		while(mItemName.find()){
@@ -71,6 +80,10 @@ public class ShoesHelp {
 		return StringUtils.EMPTY;
 	}
 
+	//匹配item的name
+		private static String expItemParentAsin ="&parentAsin=([\\S]{10})&";
+		private static Pattern pattItemParentAsin = Pattern.compile(expItemParentAsin);
+		
 	//匹配item的name
 	private static String expItemName ="<span id=\"productTitle\" class=\"a-size-large\">(.*?)</span>";
 	private static Pattern pattItemName = Pattern.compile(expItemName);
