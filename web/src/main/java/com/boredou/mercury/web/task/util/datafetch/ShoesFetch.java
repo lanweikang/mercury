@@ -39,7 +39,7 @@ public class ShoesFetch implements FetchMethod {
 		// TODO Auto-generated method stub
 		System.out.println("lwk......"+"  ShoesFetch");
 		System.out.println(goodsUrl);
-		String asin = goodsUrl.substring(goodsUrl.length()-10,goodsUrl.length());
+//		String asin = goodsUrl.substring(goodsUrl.length()-10,goodsUrl.length());
 		AmazonItemDO amazonItemDOResult = new AmazonItemDO();
 		int code = -1;
 		try{
@@ -48,19 +48,23 @@ public class ShoesFetch implements FetchMethod {
 					.setReadTimeout( 50000L ).build());
 			code = result.getResultCode();
 			String content =result.getValue();
+			String parentAsin = ShoesHelp.getParentAsin(content);
+			
 			String basePath = "C:\\Users\\Administrator\\Desktop\\logs\\";
-			String filePath = basePath + asin+".html";
+			String filePath = basePath + parentAsin+".html";
 			FileUtil.writeToFile(content, filePath, true);
-
+			
+			
+			String itemName = ShoesHelp.getItemName(content);
 			amazonItemDOResult.setItemUrl(goodsUrl);
 			amazonItemDOResult.setLastHttpCode(code);
 			amazonItemDOResult.setBelongtoCategoryId(amazonCategoryDO.getId());
-			amazonItemDOResult.setAsin(asin);
+			amazonItemDOResult.setAsin(parentAsin);
+			amazonItemDOResult.setName(itemName);
 
 			JSONObject jsonObject = new JSONObject();
 
-			jsonObject.put("asin", asin);
-			String itemName = ShoesHelp.getItemName(content);
+			jsonObject.put("asin", parentAsin);
 			jsonObject.put("itemName", ShoesHelp.getItemName(content));
 
 			//			List<String> materialList = ShoesHelp.getMaterials(content);
@@ -93,13 +97,12 @@ public class ShoesFetch implements FetchMethod {
 			List<JSONObject> ajaxList = new ArrayList<JSONObject>();
 
 			for (String asinAjax : asinList) {
-
+				JSONObject perJson = new JSONObject();
 				try{
-					JSONObject perJson = new JSONObject();
 					perJson.put("asin", asinAjax);
 					ResponseResult ajaxResult = hc.execute(RequestParams.custom().setUrl(asinAndAjaxUrl.get(asinAjax))
 							.addHeader(Consts.CHEOME_USER_AGENT)
-							.setReadTimeout(HttpClient.DEFAULT_READ_TIMEOUT)
+							.setReadTimeout(90000L)
 							.build());
 					perJson.put("code", ajaxResult.getResultCode() );
 					String ajaxResponse = ajaxResult.getValue();
@@ -128,12 +131,14 @@ public class ShoesFetch implements FetchMethod {
 
 					perJson.put("price", ShoesHelp.getItemPrice(ajaxResponse) );
 					
-					System.out.println(asin+" --ajax请求"+stocklll+" , "+pricelll);
-
-					ajaxList.add(perJson);
+					System.out.println(parentAsin+" --ajax请求"+stocklll+" , "+pricelll);
+					
 				}catch(Exception e1){
 					System.out.println("ajax请求发生异常");
+					perJson.put("error", "time out");
 					e1.getStackTrace();
+				}finally{
+					ajaxList.add(perJson);
 				}
 			}
 			jsonObject.put("childData", ajaxList);
@@ -141,19 +146,28 @@ public class ShoesFetch implements FetchMethod {
 			System.out.println("ajax 成功次数:" + i +" ,goodsUrl: "+goodsUrl);
 
 			amazonItemDOResult.setWholeContent(jsonObject.toString());
-
-		}catch(Exception e){
-			e.getStackTrace();
-			amazonItemDOResult.setLastHttpCode(ResponseResult.READ_TIMEOUT);
-			amazonItemDOResult.setAsin(asin);
-		}finally{
+			
+			
 			AmazonItemDO amazonItemDOParam = new AmazonItemDO();
-			amazonItemDOParam.setAsin(asin);
+			amazonItemDOParam.setAsin(parentAsin);
 			if(amazonItemService.getAmazonItemDOByAsinLimit1(amazonItemDOParam)==null){
 				amazonItemService.addAmazonItemDO(amazonItemDOResult);
 			}else{
 				amazonItemService.updateAmazonItemDOByAsin(amazonItemDOResult);
 			}
+
+		}catch(Exception e){
+			e.getStackTrace();
+//			amazonItemDOResult.setLastHttpCode(ResponseResult.READ_TIMEOUT);
+//			amazonItemDOResult.setAsin(parentAsin);
+		}finally{
+//			AmazonItemDO amazonItemDOParam = new AmazonItemDO();
+//			amazonItemDOParam.setAsin(parentAsin);
+//			if(amazonItemService.getAmazonItemDOByAsinLimit1(amazonItemDOParam)==null){
+//				amazonItemService.addAmazonItemDO(amazonItemDOResult);
+//			}else{
+//				amazonItemService.updateAmazonItemDOByAsin(amazonItemDOResult);
+//			}
 			System.out.println();
 			System.out.println();
 		}
