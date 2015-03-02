@@ -61,7 +61,7 @@
 	<bean id="simpleTask" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
 		<property name="jobDetail" ref="MyJob" />
 		<property name="startDelay" value="2000" /><!-- 调度工厂实例化后，经过0秒开始执行调度 -->
-		<property name="repeatInterval" value="6000000" /><!-- 这里改成每天什么时候执行 -->
+		<property name="repeatInterval" value="90000000" /><!-- 这里改成每天什么时候执行 -->
 	</bean>
 
 	<bean id="startQuertz" lazy-init="false" autowire="no"

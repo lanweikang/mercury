@@ -13,6 +13,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 public class SessionTest {
 	private static String url = "http://www.amazon.com/dp/B00EPBV39M";
 	private static String checkIP = "http://ddns.oray.com/checkip";
+	private static String baiduUrl = "http://www.baidu.com";
 	public static void main(String[] args){
 		HttpClient hc = new HttpClient();
 		hc.getParams().setContentCharset("utf-8");
@@ -20,7 +21,7 @@ public class SessionTest {
 		hc.getParams().setParameter("http.protocol.single-cookie-header", true);
 //		hc.getState().addCookie(new Cookie("",""));
 		
-		GetMethod method = new GetMethod(url);
+		GetMethod method = new GetMethod(baiduUrl);
 //		method.setRequestHeader("Accept", "text/html,application/xhtml+xml,application/xml;"); 
 //		method.setRequestHeader("Accept-Language", "zh-cn"); 
 		method.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; zh-CN; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3");

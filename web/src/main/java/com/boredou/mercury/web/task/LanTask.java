@@ -55,18 +55,20 @@ public class LanTask  {
 		AmazonCategoryDO amazonCategoryDOPara = new AmazonCategoryDO();
 
 		List<AmazonCategoryDO> amazonCategoryList = amazonCategoryService.getAmazonCategoryList(amazonCategoryDOPara);
-		List<String> pageList = null ;
-		List<String> perPageItemList ;
+		
 		
 		for (AmazonCategoryDO amazonCategoryDO : amazonCategoryList) {
+			List<String> pageList = null ;
+			List<String> perPageItemList = null ;
+			
 			amazonCategoryDO.setSearchStatus(SearchStatus.searching);
 			amazonCategoryService.updateAmazonCategoryDO(amazonCategoryDO);
 			
-			if(amazonCategoryDO.getId()<=2){
-				amazonCategoryDO.setSearchStatus(SearchStatus.complete);
-				amazonCategoryService.updateAmazonCategoryDO(amazonCategoryDO);
-				continue;
-			}
+//			if(amazonCategoryDO.getId()<=2){
+//				amazonCategoryDO.setSearchStatus(SearchStatus.complete);
+//				amazonCategoryService.updateAmazonCategoryDO(amazonCategoryDO);
+//				continue;
+//			}
 			
 //			if(!GoodsType.getInstanceMap().containsKey(amazonCategoryDO.getGoodsType()))
 //				logger.warn("goodstype doesn't contains "+amazonCategoryDO.getGoodsType());
@@ -101,11 +103,12 @@ public class LanTask  {
 //				System.out.println("pageUrl"+pageUrl+" ,itemNum:  "+perPageItemList.size());
 //				CountDownLatch perPageLatch = new CountDownLatch(perPageItemList.size());
 				for (String goodsUrl : perPageItemList) {
-//					try {
-//						Thread.sleep(1000);
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
+					try {
+						Thread.sleep(1000);
+						Thread.yield();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 //					单线程方法
 					FetchItemUtil.getItem(amazonCategoryDO, goodsUrl);
 //					线程池方法
