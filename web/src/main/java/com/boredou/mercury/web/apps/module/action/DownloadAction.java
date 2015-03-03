@@ -48,18 +48,8 @@ public class DownloadAction {
 	}
 	
 	public static void main(String[] args) throws Exception{
-		HttpClient hc = SimplePoolHttpClient.newHttpClient();
-//		String goodsUrl ="http://www.amazon.com/dp/B00DUDS0LU";
-		String goodsUrl ="http://www.amazon.com/dp/B00M8OO7A0";
-		
-		String filePath = "C:\\Users\\Administrator\\Desktop\\logs\\log.txt";
-		ResponseResult result = hc.execute(RequestParams.custom().setUrl(goodsUrl)
-				.addHeader(Consts.CHEOME_USER_AGENT)
-				.setReadTimeout( 50000L ).build());
-		int code = result.getResultCode();
-		String resp = result.getValue();
-		FileUtil.writeToFile(resp, filePath, true);
-		System.out.println("lwk..."+code);
-		hc.close();
+		System.getProperties().list(System.out);
+		System.out.println("--------");
+		System.out.println(System.getProperty("java.library.path"));
 	}
 }
